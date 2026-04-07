@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Arm64.md",
+                "file": "year2/Operating Systems.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Arm64"
+              "title": "Operating Systems"
             }
           }
         ]
@@ -150,17 +150,27 @@
               "icon": "lucide-list",
               "title": "Outline of Networks"
             }
+          },
+          {
+            "id": "0ba41ae8bc066af3",
+            "type": "leaf",
+            "state": {
+              "type": "git-view",
+              "state": {},
+              "icon": "git-pull-request",
+              "title": "Source Control"
+            }
           }
         ],
-        "currentTab": 3
+        "currentTab": 4
       }
     ],
     "direction": "horizontal",
-    "width": 200,
-    "collapsed": true
+    "width": 200
   },
   "left-ribbon": {
     "hiddenItems": {
+      "obsidian-git:Open Git source control": false,
       "bases:Create new base": false,
       "switcher:Open quick switcher": false,
       "graph:Open graph view": false,
@@ -172,22 +182,24 @@
   },
   "active": "ff8b555b486fa751",
   "lastOpenFiles": [
+    "imgs/Pasted image 20260407163747.png",
+    "imgs/Pasted image 20260407163439.png",
+    "imgs/Pasted image 20260407002601.png",
+    "imgs/Pasted image 20260407002200.png",
+    "imgs/Pasted image 20260407001633.png",
+    "imgs/Pasted image 20260407001210.png",
+    "imgs/Pasted image 20260407001126.png",
+    "imgs/Pasted image 20260406232216.png",
+    "imgs/Pasted image 20260406231915.png",
+    "imgs/Pasted image 20260406224817.png",
+    "imgs/Pasted image 20260406205036.png",
+    "Mechanism.md",
+    "year2/Operating Systems.md",
+    "Arm64.md",
     "useful stuff/Numpy.md",
-    "imgs/Pasted image 20260209215547.png",
     "year2/Machine Learning.md",
     "useful stuff/System Design OOFFFF.md",
     "year2/Networks.md",
-    "imgs/Pasted image 20260302133820.png",
-    "imgs/Pasted image 20260302133748.png",
-    "imgs/Pasted image 20260302133438.png",
-    "imgs/Pasted image 20260302133413.png",
-    "imgs/Pasted image 20260302132954.png",
-    "imgs/Pasted image 20260302132311.png",
-    "imgs/Pasted image 20260302132256.png",
-    "imgs/Pasted image 20260302130319.png",
-    "imgs/Pasted image 20260302110642.png",
-    "year2/Operating Systems.md",
-    "Arm64.md",
     "Peg.md",
     "Parsley (Parser Combinators).md",
     "year2/Scala.md",
@@ -210,7 +222,6 @@
     "year2",
     "2025-10-15.md",
     "useful stuff",
-    "Exams Revision.md",
     "imgs",
     "Computing Practical One/kotlin",
     "Computing Practical One/haskell",
