@@ -420,3 +420,290 @@ Turnaround time for 4th process = 3603
 Therefore average is somewhere around 902.25
 ```
 MUCH LOWER!
+
+## Round Robin Scheduling 
+Process runs until it blocks or time quenatum exceeded. (Preemptive according to google.) 
+
+**Features**
+- Fairness 
+    Ready jobs get equal share of the CPU 
+- Response time 
+    Good for small number of jobs 
+- Average turnaround time  
+    Low when run times differ
+    Poor for similar run times 
+
+**RR Quantum**
+RR overhead: 
+- `4ms` quantum, `1ms` context switch, we have an overhead time of 20%
+    *Overhead time* = `context switch / quantum`
+- `1s` quantum, `1ms` context switch time: `0.1%` time for overhead 
+
+*Large quantum*
+So large quantum time = smaller overhead. 
+large quantum time = worse response time. 
+If `quantum is inifinity` then we have FCFS
+
+*Small quantum*
+Small quantum = large overhead 
+Small quantum = better response time. 
+
+Therefore *REMEMBER* `quantum is directly proportional to response time and inversely proportional to overhead`
+
+Heuristic for choosinga quantum value 
+- Should be much larger than context switch cost 
+- But provides decent response time 
+
+EASY!
+
+## Shortest Job First (SJF)
+Non Preemptive scheduling with run times known in advance. Pick the shortest job first. 
+![[Pasted image 20260407172352.png]]
+```
+FCFS turnaround time = 8 + 12 + 16 + 20 = 56
+SJF turnaround time = 4 + 8 + 12 + 20 = 44 
+```
+Provably otimal. 
+
+## Shortest Remaining Time (SRT)
+Preemptive  version of shortest job first. Again runtimes have to be known in advance. 
+**Choose process whose remaining time is shortest**
+- When new process arrives with execution time less than the remaiing time for the running process, run it. 
+![[Pasted image 20260407172717.png]]
+
+![[Pasted image 20260407172727.png]]
+
+## Fair share scheduling 
+![[Pasted image 20260407173153.png]]
+A fair share RR scheduler would have for `user 1` each process would get `50% / 4`
+and for `user 2` each process would get `25%`
+
+## Priority scheduling 
+Jobs are run based on their priority. Always run the job with the highest prioirty. 
+Priorities can be externally defined, by the user or based on some process specific metrics. 
+Priorities can be static or dynamic. 
+
+## General purpose scheduling 
+**Favour short and I/O bound jobs**
+- Get good resource utilisation 
+- And short respone times 
+**Quickly determine the nature of job and adapt to changes**
+- Processes have periods when they are I/O bound and periods when they are CPU - bound. 
+
+## Multi level Feedback Queues 
+A form of priority scheduling. 
+One queue for each prioirty level 
+- Run job on highest non empty prioirt queue 
+- Each queue can use different scheduling algorithm usually round robin. 
+![[Pasted image 20260407174314.png]]
+![[Pasted image 20260407174400.png]]
+
+![[Pasted image 20260407174412.png]]
+
+## Lottery Scheduling 
+Job receive lottery tickets for various resources. 
+At each scheduling decision, one ticket is chosen at random and the job holding that ticket wins. 
+100 lottery tickests for CPU time, P1 has 20 tickets. Chance of P1 running during the next CPU quantum is 20%
+![[Pasted image 20260407174703.png]]
+
+# Synchronisation 
+Some definitions 
+**Critical section** Section of code in which processes access a shared resource
+**Mutual exclusion** ensures that if a process is executing its critical section, no other process can be xecuting it. Processes must request permission to enter ciritcal ections. 
+![[Pasted image 20260407200143.png]]
+
+## Disabling interrupts 
+![[Pasted image 20260407200318.png]]
+
+## Strict Alteration 
+![[Pasted image 20260407201912.png]]
+Strict Alteration uses busy waiting. Busy waiting wastes CPU time and should only be used when the wait is expected to be short. 
+
+## Peterson's solution 
+![[Pasted image 20260407202226.png]]
+
+## Lock Variables
+![[Pasted image 20260407202821.png]]
+Well this wouldn't work as in the lock function and we are right after the while loop if we get an interrupt and we context switch, then we are cooked!!! 
+
+**Test and Set Lock**
+![[Pasted image 20260407212832.png]]
+Spin locks waste CPU and should only be used when the wait is expected to be short. We may run into priority inversion problem. 
+So what is prioirty inversion problem first?
+Lets say we have two processes, H with high prioirty and L with low priority. H should always be scheduled if runnable. 
+Lets assume the following scenario. 
+- H is waiting for I/O 
+- L acquires lock A and enters critical section
+- I/O arrives and H is scheduled 
+- H tires to acquire lock A that L is holding 
+
+## Lock Overhead and Lock Contention 
+**Lock Overhead** Measure of cost associated with using locks like the memory space, initialisation and time required to acquire and release locks. 
+**Lock Contention** Measure of number of processes waiting for lock. More Contention, less parallelism. 
+
+So coarse grained locking would have less overhead but more contention and less complexity. 
+Fine grained would have more overhead, less contention and more complexity. 
+
+## Read/Write Locks
+![[Pasted image 20260407214239.png]]
+
+## Memory Models 
+In this course we assume **sequential consistency**
+**Sequential consistency** means, the operations of each thread appear in program order. and the operations of all threads are executed in some sequential order atomically. 
+![[Pasted image 20260407214716.png]]
+
+## Semaphores
+![[Pasted image 20260407222232.png]]
+*Note:* The above `3` functions are atomic. 
+So basically if we down on `0` it is just going to yield and wait till its upped. 
+
+![[Pasted image 20260407222803.png]]
+
+![[Pasted image 20260407222815.png]]
+
+**Producer / Consumer**
+• Producer constraints: – Items can only be deposited in buffer if there is space – Items can only be deposited in buffer if mutual exclusion is ensured 
+• Consumer constraints:– Items can only be fetched from buffer if it is not empty– Items can only be fetched from buffer if mutual exclusion is ensured 
+• Buffer constraints:– Buffer can hold between 0 and N items
+![[Pasted image 20260407224150.png]]
+
+## Monitors
+![[Pasted image 20260407224604.png]]
+![[Pasted image 20260407224615.png]]
+
+## Summary
+![[Pasted image 20260407225127.png]]
+I dont really know what a mutex is? Apparantly gpt says a mutex enforces the compulsory ownership. So only the thread that locks can unlock. 
+
+# Deadlocks
+Set of processes is deadlocked if each process is waiting for an event that only antoher processc an cause. 
+4 conditions for deadlock 
+- Mutual exclusion: each resource is either availabe or assigned to exactly one process. 
+- Hold and Wait: process can request resources while it holds other resources earlier. 
+- No preemption: resources given to a procss can't be forcibly revoked. 
+- Circular wait: a set of processes in a circular chain, each waiting for a resource held by the next process. 
+If all thesse 4 conditions hold, then we have a deadlock. 
+
+Another way to find a deadlock is by **resource allocation graph**
+## Resource Allocation Graph 
+Directed graph models resource allocation
+- Direceted edge from resource to processss means that the process is currently owning that resource. 
+- Directed edge from process to resource means that the process is currently blocked waiting for that resource. 
+And if there is a **cycle** then we have a **deadlock**.
+
+## Stratergies for dealing with deadlock
+**Detection and recovery**
+![[Pasted image 20260407231502.png]]
+So we just build a resource allocation graph and check if there are any cycles. 
+![[Pasted image 20260407231848.png]]
+
+**Dynamic avoidance**
+System grants resources when it knows that it is safe to do so. 
+
+**Prevention**
+Focus on removing any 1 of the 4 conditions for a deadlock. 
+- Removing mutual exclusion condition 
+    Share the resource. 
+- Removing the hold and wait condtion 
+    Require all processes to request resources before start 
+    If not available then wait. 
+    Issue with this is we need to know what we need in advance 
+- Removing the no preemption condition 
+    Force processs to give up printer half way 
+- Removing the circular wait conditon 
+    Force single resource per process? - Optimality issues 
+    Number resources, processes must ask for resources in **order** - Issue: Large number of resources can be difficult to organise. 
+    ![[Pasted image 20260407232747.png]]
+
+## LiveLocks 
+Livelocks are a variants of deadlocks but where threads are not blocked, but they or the system as a whole is not making progress. 
+
+## Starvation
+We need to make sure even the thread with the lowest priority would certainly run. Its not that it would never get its turn. 
+
+# Memory 
+## Logical vs Physical address space
+Memory management binds logical address space to physical address space. 
+**Logical Address**
+- Generated by the CPU 
+- Address sapce seen by process 
+**Physical address**
+- Address seen by the memory unit 
+- Refers to physical system memory
+*Note:* We as a programmer would only be able to see the logical address and never the physical address. 
+#### MMU  
+MMU is a hardware device for mapping logical to physcial addresses. 
+A simple one could be to just add some offset to the logical address. 
+## Continuous Memory Allocation 
+Main memory is split into kernel and user space. 
+**Base** register contains value of smallest *physical address*. 
+**Limit** register contains the range of logical address. *Note:* Logical addresses would go from `0` to `limit - 1` 
+And in order to make it into physical address we would do `base + virtual address` And before this we can check if the virtual address is legal by checking with the `limit`. 
+This is an **old convention** aka before paging (new one). It assumes everything can be fit inside the RAM. 
+![[Pasted image 20260408143527.png]]
+So each process goes and occupies into the RAM. 
+![[Pasted image 20260408143615.png]]
+A simple workflow. 
+Comes with more problems than good. 
+We have holes, when we remove a process and then add a new one. 
+![[Pasted image 20260408144543.png]]
+
+And in order to satisfy this, we have to use dynamic storage allocation 
+- First Fit: Allocate first hole that is bigh enough 
+- Best fit: Allocate smallest hole that is big enough 
+- Worst Fit: Allocate largest hole 
+
+**Fragmentation**
+- **External Fragmentation** When there is total memory to satisfy the process but they are not contiguous
+- **Internal Fragmentation** Allocated memory is larger than requested memory. 
+
+**Compaction**
+We can reduce external fragmentation by compaction. Where we shuffle memory contents to place all free memory together in one large blcok. Leads to I/O bottlenecks. 
+
+**Swapping**
+Solves the problem of having a number of processes limited by amount of avaialble memory. But only running processes need to be in memory. 
+Swap processes temporarily out of memory to disk. It requires swap space. 
+
+## Virtual Memory with paging 
+![[Pasted image 20260408151046.png]]
+
+Each process now can assume infinite memory (obviously would be bounded by the number of bits in the computer. So a 64 bit would be `2^64 - 1` as MAX)
+![[Pasted image 20260408151144.png]]
+So now each process can arrange its memory and say ohh my logical address `0` is going to start with my code and my logical address `Max` is where the stack should start and bla bla bla. 
+But *remember* we dont really neeed to map all these into physcial. We would only map the used ones into pages. Easy!
+
+We would require to have a somewhat of contstraint into the memory map table. If the memory map table grows linearly with the number allocated pages, then we have a problem. We will look into how we solve this in the future. 
+
+Virtual memory can be implemented via Paging or segmentation. Segmentation is like paging but the pages can grow in size. It is complex and is legacy now. Paging is what stays.  
+### Paging 
+**Frames**
+- Fixes size blocks of *physical* memory 
+- Kepp track of all free frames
+**Pages**
+- Block of same size of logical memory 
+
+So in order to run a program of size n pges 
+- Find n free frames and load program 
+- Set up page table to translate logical to physical addresses
+
+![[Pasted image 20260408152632.png]]
+So now we don't need to have them continuous in the phyiscal memory. But the logical memory is continous. Nice! 
+Now the *Page table* is the important structure that holds the mapping from page number to frame number. It looks like an array. With the index being the page number and the value is the frame number. 
+
+Q. I still don't really understand how this would work with multiple processes. 
+A. Idk if this is completely right. But from my Pintos knowledge a page table is per process. So when context switching you would use the page table of the other process. This way we would still know the frame number. Im pretty sure this is how it works. Future Jayce can confirm. Future Jayce: I confirm this is right. Look at[[#^39da50 | this]]
+
+
+**Small page size vs Large page size**
+Lets say we want to malloc `1` byte. But the least amount of memory we can provide with virtual memory and paging is `1` page. So we are wasting memory if we are using a large page size. 
+But now lets say we have a large program that requires `40` pages. Then if we are using a small page size we are doing a lot of update to the page table. Therefore slowing down our system. 
+There is a tradeoff. 
+
+**Context switch in virtual memory**
+Page table is per process. 
+The operating system must locate the page table for the process that is to start running. It must set the base register in the MMU so that it points to the page table in memory. Finally, it must clear any now invalid cached address translations from the TLB (translation lookaside buffer).  ^39da50
+
+
+# Important question to Practice
+![[Pasted image 20260407180618.png]]
+Remember to count properly here. Last time i messed up for counting for B as 25 (included C, D, E). 
