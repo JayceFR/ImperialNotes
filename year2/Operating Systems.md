@@ -116,6 +116,7 @@ Process A may need to restart later, therefore all information concerning the pr
 - Its own virtual CPU
 - Its own address space (stack, heap, text, data)
 - Open file descriptors
+![[Pasted image 20260408235333.png]]
 
 Context switches are expensive. 
 
@@ -281,6 +282,7 @@ Processes are too heavyweight
 - Expensive to context switch between activities 
 - Expensive to create/ destroy activities. 
 
+*Note:* Threads are not good at preventing failures of one part of the program from crashing another as they share the same memory. 
 ### Problem with threads
 Shared address space. Memory corruption and concurrency bugs. 
 
@@ -367,7 +369,7 @@ If every process is ready to run, we need a way to choose which process to run n
     *Throughput: Jobs per unit of time*
     *Turnaround time: Time between job submission and completion*
 - Interactive systems 
-    Response time crucial: Time between request issued and first response (a movement of mouse)
+    *Response time* crucial: Time between request issued and first response (a movement of mouse). High when using SJF
 - Real time systems -> We want the process to get and computed by a certain deadline. I don't care of how it happens. 
     Two types of meeting deadlines: 
     - Soft deadlines: Like maintaining 60fps in streaming videos or a game. Not meeting so wouldn't lead to death. 
@@ -464,6 +466,9 @@ FCFS turnaround time = 8 + 12 + 16 + 20 = 56
 SJF turnaround time = 4 + 8 + 12 + 20 = 44 
 ```
 Provably otimal. 
+*Important:* Response time is high for SJF. 
+![[Pasted image 20260408235312.png]]
+
 
 ## Shortest Remaining Time (SRT)
 Preemptive  version of shortest job first. Again runtimes have to be known in advance. 
@@ -698,12 +703,159 @@ A. Idk if this is completely right. But from my Pintos knowledge a page table is
 Lets say we want to malloc `1` byte. But the least amount of memory we can provide with virtual memory and paging is `1` page. So we are wasting memory if we are using a large page size. 
 But now lets say we have a large program that requires `40` pages. Then if we are using a small page size we are doing a lot of update to the page table. Therefore slowing down our system. 
 There is a tradeoff. 
+So with small page size there is **less internal fragmentation**
+![[Pasted image 20260408235620.png]]
+The reduced page transfer time is a fact. REMBER IT. 
+![[Pasted image 20260408235628.png]]
+This was a shame. :( 
+But *Note:* Larger page size doesn't result in less external fragmentation. I believe it would be more. Cause there is much more higher chance of having holes and not being able to fit into any one of them. 
 
-**Context switch in virtual memory**
+*Important:* **Context switch in virtual memory**
 Page table is per process. 
-The operating system must locate the page table for the process that is to start running. It must set the base register in the MMU so that it points to the page table in memory. Finally, it must clear any now invalid cached address translations from the TLB (translation lookaside buffer).  ^39da50
+The operating system must locate the page table for the process that is to start running. It must set the base register in the MMU so that it points to the page table in memory. Finally, it must clear any now invalid cached address translations from the [[#^fac0a1|TLB]] (translation lookaside buffer).  ^39da50
+
+#### Address Translation
+![[Pasted image 20260408155506.png]]
+So *VERY IMPORTANT* we need to write the page size in terms of `2^n` bytes. NOTE THE BYTES.
+
+![[Pasted image 20260408155524.png]]
+Now here is the functionality of the MMU. It now has the base pointer pointing at the page table of the process. (from [[#^39da50 |above]])
+And then we access the page table from p so (base + p) and find the frame number f. The d is just copied over. Easy!
+
+### Memory Protection
+We have a valid bit in the page table, saying whether the page table entry is valid or not. So prevents processes from being able to access a memory it never allocated. 
+
+### Page table Implementation 
+Every page table is kept per process, in the process's memory.
+Each page table has 
+- Page table base register (PTBR) which points to page table.
+- Page table length register (PTLR) which indicates size. 
+
+The problem is it is very inefficient. 
+- Every data/instruction access requires two memory access, one for page table and one for data/instruction. 
+Solution is to use a special fast lookup cache as associative memory. 
+**Associative Memory** 
+Supports Parallel search. And helps in address translation (p, d).  ^4c5634
+- If p in associative register, get frame number out 
+- Otherwise get frame number from page table in memory. 
+
+### TLBs (Translation Look aside Buffers)
+
+^fac0a1
+
+^97cbb8
+TLBs are a [[#^4c5634|associative memory]], so supports *parallel search*. 
+So implemented by the hardware to offer us fast lookup. 
+So if we get a TLB hit, we would be able to get fast results. 
+![[Pasted image 20260408164209.png]]
+
+There are still a bunch of subtleties here. 
+Now when we are doing a context switch we would need to flush the TLB. So this is a problem when we are starting a new process. You would initially get a lot of TLB misses and then you would get a neater performance (Like Roblox dieing at the start!). 
+
+Even with system calls, we would need to do TLB flushes, which would impact the peformance a lot. As after coming back, we would get a lot of TLB misses and then the performance would gradually increase only to again to another system call. There is a neat solution to this apparently. We would look into it later. Future Jayce can tag here. 
+
+Some other TLBs are not process specific but more generic. 
+![[Pasted image 20260408164544.png]]
+
+We can configure the kernel to what we would want. 
+
+### Performance : Effective Access time 
+Time it takes to access memory. 
+![[Pasted image 20260408165223.png]]
+*Note:* The associative terms are just TLBs (from above)
+```
+Let 
+TLB lookup time = epsilon
+
+TLB Hit Percentage = alpha 
+
+So two cases to consider 
+
+EAT = TLB hit or TLB Miss
+    = TLB hit + TLB Miss
+    = (epsilon + 1)alpha + ... 
+
+The 1 is just an assumption for the time it takes to get access memory. If we miss we would need to access the page table and the memory as well, so 2. 
+```
+Easy!
+
+### Page Table Problems 
+![[Pasted image 20260408165604.png]]
+Going back to this picture. We know we would require the page table to be an array so we can do fast lookups, therefore continuous. And we know we would need to even have large page table for every amount of page. This makes our page table large. 
+Obviously in the question with the `2^16` address space (it can be found [[#^460561|here]]), the page table was tiny so it was fine. But obviously in the real world this would be enormous. 
+We need to change the way of representing these page tables. 
+- Hierarchical page table 
+- Hashed page table 
+- Inverted page table
+Lets look through these 1 by 1 
+### Hierarchical Page Table 
+We could have a `2 level page table` 
+We are breaking up our virtual address to do an index in the outer page table. And then we are going to the inner page table and then finally the memory. 
+![[Pasted image 20260408170132.png]]
+But wait, how does this help for the problem we introduced above?
+Answer. The outer page table needs to be completely allocated. BUT we only need to allocate the inner page table if any one of those page tables are allocated. 
+The problem again is the performance, we would need to do 2 lookups compared to one. 
+![[Pasted image 20260408170321.png]]
+*Note* The d would remain the same, as it is governed by the page size. Easy!
+
+But now why not instead of storing entry per page but store per frame. 
+
+### Hashed page table 
+![[Pasted image 20260408170821.png]]
+
+### Inverted page table 
+![[Pasted image 20260408170900.png]]
+So now we have a structure where it isn't proportional to number of pages but proportional to the number of frames. 
+`# frames << # pages. `
+But now the lookups are inefficient. It is O(n) as we are now finding the index rather than the value. 
+So the most popular way of handling page table is Hierarchial page table and we would have a good TLB to get better results. 
+Nice! Too easy!
+## Shared Memory 
+Basically two pages map to the same frame. 
+There are some common commands to request for shared memory. 
+![[Pasted image 20260408222934.png]]
+
+Question: What is better? shared memory or pipes?
+![[Pasted image 20260408223145.png]]
+
+## Segmentation
+![[Pasted image 20260408223751.png]]
+
+**Paging vs Segmentation**
+Why did segmentation not take off?
+- Complex. Segmentation is complex in nature to implement in the hardware wise.
+- Exposes itself to the programmer. Say we have code segment, data segment, heap segment and stuff. Now whenever we need to access any one of these segments, like when our program needs to access any one of these segments, then it would need to do segment switching. Adds more complexity. Done by the compiler, but makes the compiler more complex and ties it directly to the hardware. So in a nutshell segmentation exposes how it works to the programming model, which is bad. Instead paging is completely abstracted and is better. 
+## Demand Paging 
+Only bring page into memory when needed. 
+- Lower I/O load
+- Less memory needed
+- Faster response time 
+- Support for more users
+Page needed -> reference it 
+- invalid reference -> abort 
+- not in memory -> bring to memory. 
+Basically what we implemented in Pintos. Implemented using the valid bit and page faults. 
+![[Pasted image 20260409003149.png]]
+Now we would need to change the page fault handler to distinguish between page faults. 
+![[Pasted image 20260409003311.png]]
+
 
 
 # Important question to Practice
+^460561
+
 ![[Pasted image 20260407180618.png]]
 Remember to count properly here. Last time i messed up for counting for B as 25 (included C, D, E). 
+
+![[Pasted image 20260408163608.png]]
+Here is the answer
+![[Pasted image 20260408163630.png]]
+
+![[Pasted image 20260408200709.png]]
+Just for fun. The above question is easy! 
+
+![[Pasted image 20260408201003.png]]
+
+![[Pasted image 20260408223151.png]]
+
+![[Pasted image 20260408235418.png]]
