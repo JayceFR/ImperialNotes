@@ -776,6 +776,9 @@ EAT = TLB hit or TLB Miss
     = (epsilon + 1)alpha + ... 
 
 The 1 is just an assumption for the time it takes to get access memory. If we miss we would need to access the page table and the memory as well, so 2. 
+
+From future Jayce: 
+Now lets say we have to go through three page tables rather than the single page table. Then the 2 would become 4. As TLB -> first -> second -> third. Too easy!
 ```
 Easy!
 
@@ -825,6 +828,21 @@ Question: What is better? shared memory or pipes?
 Why did segmentation not take off?
 - Complex. Segmentation is complex in nature to implement in the hardware wise.
 - Exposes itself to the programmer. Say we have code segment, data segment, heap segment and stuff. Now whenever we need to access any one of these segments, like when our program needs to access any one of these segments, then it would need to do segment switching. Adds more complexity. Done by the compiler, but makes the compiler more complex and ties it directly to the hardware. So in a nutshell segmentation exposes how it works to the programming model, which is bad. Instead paging is completely abstracted and is better. 
+
+## Case Study - Linux
+![[Pasted image 20260409121138.png]]
+Linux 32 had this convention of storing the kernel address space along with the virtual memory. This was done to make sure the entire there is no need for switching page tables during a context switch. As each process has access to kernel memory. 
+BUT **THIS HAS A BUG!**
+**Meltdown attack**
+![[Pasted image 20260409121338.png]]
+So obviously this would work, as the other code wouldn't run after a seg fault. 
+The problem that arises is  when an optimisation called speculation is done by the CPU. 
+![[Pasted image 20260409121559.png]]
+So basically on speculating whether the if condition would run. 
+*Note:* It can't seg fault in the speculation as we are not sure whether we would go in the if condition or not. 
+But now even if we go in, we would seg fault. So everything looks good right??
+Well no!
+Becuase it has been speculated, it would be in the TLB. So a hacker can check for the time of access. And if it is less, then we know we have a TLB hit. And we can query that. Kernel memory is leaked. Uh Oh. So Linux 64 just doesn't have this kernel memory access in the virtual memory. It simply sacrifices the performance. So maintains a separate kernel page table. 
 ## Demand Paging 
 Only bring page into memory when needed. 
 - Lower I/O load
@@ -839,7 +857,166 @@ Basically what we implemented in Pintos. Implemented using the valid bit and pag
 Now we would need to change the page fault handler to distinguish between page faults. 
 ![[Pasted image 20260409003311.png]]
 
+This does affect performance. As we are loading parts of it as we are running the program. 
+**Double fold** Hardware support to find OS bugs. Like finds repeated page faults. 
 
+![[Pasted image 20260409004235.png]]
+The memory access here is the formula we had before (aka the one with TLB hit rate epsilon stuff and with the page walks). 
+![[Pasted image 20260409004406.png]]
+
+So demand paging is good only when page fault rate is close to `0`
+## Copy On Write 
+Allows parent and child processes to initally share same pages in memory. 
+- If ether processes modify the shared pae, then copy page. 
+Efficient process creation: copy only modified pages
+Free pages allocated from pool of zeroed out pages. 
+![[Pasted image 20260409123804.png]]
+We intially set the page to `read only`
+Then if either parent or child would try writing to it. A page fault would arise. Now we need to simply copy the page. And set it to R/W. Easy!
+So on any *fork* we would to copy on write. Thats the reason when we fork a parent process. Both the child and the parent would run a bit slowly at start as there is a lot of page faults. But later on slowly with time, both would get their own R/W page and performance would slowly increase. 
+## Memory Mapped Files
+Traditional way of accesssing a file from a disk would be a via a system call `open` which would return a file descriptor, which we can use later. 
+We can do better, with memory mapped files. 
+It maps file into virtual address space using paging. So loads only certain range of the file. Doesn't require to keep having system calls. 
+It simplifies programming model for I/O. 
+## Page Replacement 
+When we have no free frame, we need to replace the page. 
+- Find some unused page in memory to swap out. 
+![[Pasted image 20260409124900.png]]
+*Dirty bit* is important here. If the page has been written to then the dirty bit is set. If it is not set, then we are chilling as it was loaded from memory so we can simply throw it away. But if the dirty bit was set we need to send it to our swap space. 
+Easy Pintos knowledge. 
+
+When we dont have any free frames we can use a replacement algorithm to find the **victim** frame. 
+![[Pasted image 20260409125226.png]]
+More page frames (more memory) leads to less number of page faults. 
+#### FIFO
+![[Pasted image 20260409125754.png]]
+Solves with `15` page faults. 
+It is a bad one. As it doesn't keep track of whether the entire the 
+It even breaks the rule of more memory less page faults. 
+![[Pasted image 20260409131106.png]]
+
+## Optimal algorithm 
+We want to replace a page that won't be used for the longest period of time in the future. 
+![[Pasted image 20260409131443.png]]
+Way less number of page faults. 
+Problem is we are not soothsayers. Can't implement in practice. 
+## Least Recently Used (LRU) 
+![[Pasted image 20260409131541.png]]
+Rationale behind use is if we haven't used the page for long time, its unlikely we are going to use it again. 
+Uses the past to predict the future. 
+The problem is it is too **expensive**. We need one more memory access to copy the clock into the counter. And we also need to find the one with the lowest counter. Which is slow. 
+## LRU Approximation algorithm 
+**Reference Bit**
+- Each page has a reference bit r, intially r = `0`. When page is reference we set r = `1` When replacing we are going to replace the page with `0`. 
+- Periodically we need to reset the reference bits. 
+- Doesn't provide a perfect order. But is less expensive. 
+**Second Chance (or clock) page replacement**
+- Combines round robin replacement with reference bit r. 
+- If page to be replaced (in RR order) has r = 1 then:
+    - Ser r = 0 and increment RR frame index (leave the page in memory)
+    - Repeat subject to same rules 
+- If r = `0` then replace page and increment the RR index. 
+- implemented using a circual queue.  ![[Pasted image 20260409132711.png]]
+- New pages must be added before the pointer. 
+- So the pages below the pointer (aka when the pointer is incremented) we move towards the 2nd oldest page then the 3rd oldest page and so on. 
+- If there is empty space then we can simply add it to that place (done by palloc_get_page in Pintos)
+- Sample tutorial to try. Answer in Important questions to try
+- ![[Pasted image 20260409164021.png]]
+Easy!
+![[Pasted image 20260409132851.png]]
+
+## Locality of Reference
+Recap of architecture first. 
+We had 
+- Temporal locality 
+- Spacial locality 
+**Spacial locality** is the idea that if a program accesses a memory location, it is likely to access nearby memory locations soon after. 
+We looked at this when talking about  caches. Caches exploit spatial locality y loading cache lines. **Stride** is how far successive memory accesses are. 
+*Row major vs Column major* access of a matrix (2d array). Row major is better as it has `stride = 1` So would utilise the entire cache line. Therefore better.
+**Temporal locality** reuse the same memory location. So like reusing the same memory location soon. 
+
+We now use this idea to formulate a Working Set Model 
+![[Pasted image 20260409154525.png]]
+
+## WS Clock Algorithm (Working Set Clock Algorithm)
+![[Pasted image 20260409154618.png]]
+The age is calculated by `current_time - previously access time`
+So even after giving the process a 2nd chance we are still going to let it stay in the cache if its young (within the working set). This improves locality of reference. As similar pages are morelikely to be accessed. 
+Now the problem arises, how to choose this W. 
+Well we can simply measure the **page fault frequency**. If we have a lower W then we would have way too many page faults. But if our W is very large, then we would have little to no page faults. 
+![[Pasted image 20260409154937.png]]
+
+## Global vs Local Page Replacement 
+### Local Page Replacement
+
+> “Each process gets fixed allocation of physical memory”
+
+#### What it means
+
+- Each process owns a **fixed number of frames**
+- If it page faults:
+    - It can **ONLY evict its own pages**
+
+#### ✅ Example
+
+Say:
+
+- Process A → 10 frames
+- Process B → 5 frames
+
+If A needs a new page:
+
+- It must evict one of its **own 10 frames**
+- It **cannot touch B’s memory**
+
+---
+
+#### 👍 Pros
+
+- Isolation: processes don’t interfere with each other
+- Predictable performance
+
+#### 👎 Cons
+
+- Wasteful:
+    - A might need more memory but can’t get it
+    - B might have unused frames but keeps them
+
+### Global Page Replacement
+
+> “Dynamically share memory between runnable processes”
+
+#### What it means
+
+- All frames are in a **big shared pool**
+- When a page fault happens:
+    - You can evict a page from **any process**
+
+---
+
+#### ✅ Example
+
+If A needs memory:
+
+- It might evict a page from **B**
+
+---
+
+#### 👍 Pros
+
+- Better utilisation of memory
+- Adapts automatically:
+    - Processes that need more memory get more
+
+---
+
+#### 👎 Cons
+
+- Processes interfere with each other
+- One greedy process can cause **thrashing** for others
+
+# Device Management
 
 # Important question to Practice
 ^460561
@@ -859,3 +1036,7 @@ Just for fun. The above question is easy!
 ![[Pasted image 20260408223151.png]]
 
 ![[Pasted image 20260408235418.png]]
+
+![[Pasted image 20260409164021.png]]
+![[Pasted image 20260409164035.png]]
+The reference bit is initially set when adding it in. In exams we can just state the assumption. 
