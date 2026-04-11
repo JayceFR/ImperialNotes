@@ -1017,6 +1017,309 @@ If A needs memory:
 - One greedy process can cause **thrashing** for others
 
 # Device Management
+![[Pasted image 20260409175424.png]]
+
+We even firther require device independence. 
+So device independence from 
+- Device type (terminal, disk, or DVD drive)
+- Device instance (which disk?)
+We further want to abstract over these as well 
+![[Pasted image 20260409175629.png]]
+We have two device types
+- character device 
+- block device. 
+So for a keyboard we would want a **charcter device**. 
+![[Pasted image 20260409180007.png]]
+
+## IO Layers
+![[Pasted image 20260409180111.png]]
+### Interrupt Handler
+- Process each interrupt 
+- For Block devices: on transfer completion, signal device handler 
+- For character devices: when character transferred, process next character. 
+
+*Note:* Page faults are not interrupts, they are exceptions. 
+Exceptions happen within the CPU.
+Interrupts happend from external devices. 
+### Device Driver
+- Handles one device type. (But may control multiple devices of the same type). So we would have one for keyboard and the same can be used for any number of keyboards. 
+Role of device driver
+- Implement block read or write 
+- Access device registers. 
+- Initiate operations 
+- Schedule requests
+- Handle errors which are passed to the above layer 
+### Device Independent Layer
+- Mapping logical to physical devices
+- Request validation against device characterstic 
+- Allocation of dedicated devices 
+- Protection / User access validation 
+- Buffering for performance and block size independence 
+- Error reporting. Bubble the errors from device driver. 
+
+## Dedicated vs Shared Device Allocation 
+**Dedicated device**
+These are devices that only one process can use at a time. 
+Once a process gets it, it owns it exclusively for a while. 
+- If another process tries to open it and it is already opended, then it fails
+- Alternatively a queue can be managed saying who is next
+- Allocated for long periods (means, a process wouldn't just give it up in a small burst. It would use it for a long time.)
+- Only allocted to authorised processes. 
+**Shared device**
+These are the devices that mutliple processes can use at the same time. 
+Easy!
+
+**Spooling**
+WHen we are using a dedicated device, and a process is using it. This may create delays and bottlenecks if another process wants to use it as well. 
+To solve this, we spool to intermediate medium. 
+For example: 
+Lets say a printer was a spooled device. 
+- We first save the file we want to print to a folder. 
+- File printed later by spooler daemon. 
+- So the printer is only allocated to spooler daemon. And no normal process allowed direct access. 
+*Note:* So spooling provides sharing of nonsharable devices and reduces I/O time thus giving greater throughput. 
+
+## Buffered vs Unbuffered I/O
+*Note:* These buffered I/O are software implementation that live in RAM. 
+They are different from the hardware disk controller buffer which is described later down in DMA. 
+![[Pasted image 20260409184451.png]]
+The buffered I/O i**mproves perfromance** as there is no context switching or waiting. Like even if we use **DMA** (described down) we would still need to wait till an interrupt wakes the thread up. But with buffered I/O the thread can always be in Running State. Ok Nice!
+Lets talk a bit more about Buffered I/O. 
+- Now reading is fast, as if it is present in the buffered cache, then we gain more performance. 
+- Now because of this fact, the OS can now perform reads ahead. So learn about how the process is reading and try optimising something there. 
+- The buffered I/O is able to **handle differences in units of data**. Like lets say we want to read `1B` from disk, but the disk read only gives us `8B` of data. 
+
+We are back to the layers now?? Some weird way of structuring the lesson. 
+![[Pasted image 20260409184939.png]]
+Typically **conversion between data representations for I/O** will be done by a user level I/O library that an application can linked against. This gives the user maximum flexibility in choosing the right conversion strategy. In addition, the conversion can be done cheaply in user space because it does not need any privileged kernel access. 
+**Blocking vs Non Blocking**
+**Blocking**
+-  The thread stops and waits. It can't do anything else. 
+- Thread goes into **Waiting state**
+**Non Blocking**
+- The call returns immediately. 
+- So if data is ready like present in the buffer cache, then it is returned. Otherwise, the disk needs to do work, so would return an error, saying it would need to block. 
+- Lets say we do a read and the data is not in the cache or in memory. Then the OS would intiate disk I/O (via the DMA). And we would simply get an errror returned to us. The disk I/O happens independently in parallel (hardware parallelism). So doesn't affect our thread at all. 
+
+**Synchronous vs Asynchronous**
+**Synchronous**
+- We wait for the result in the control flow. 
+- It means, we call for something  and we can't process meaningfully until it finishes. ![[Pasted image 20260410195441.png]]
+- So if it does synchronous blocking, the thread would be put to sleep 
+- If it does synchronous non blocking, then the thread would be constantly polling in order to know wheter it got the data. 
+**Asunchronous**
+- We start the operation, we continue doing other work. Result comes later via notification. 
+- So the OS/system would check for completion and would notify the user thread. The user thread can still be running. ![[Pasted image 20260410203521.png]]
+- It is potentially less secure and hard as if we are passing a buffer to the asynchronous function. And now no one is preventing me from freeing the buffer or adding data to the buffer. We need to be careful. 
+- Medium and professor says it never blocks, but gpt says it can. 
+- **No Context switch** As it just goes to kernel mode and then comes back. ![[Pasted image 20260410204000.png]]![[Pasted image 20260410204031.png]]
+
+## Device Drivers
+Lets look at device drivers in a bit more detail now. 
+Device drivers are programs in the kernel that communicate with the device. 
+How do they communicate with the device?
+They use one of the following ways 
+- **Memory Mapped I/O** 
+- **Programmed I/O** 
+- **Interrupt Driven I/O**
+- **I/O using Direct Memory Access.** 
+
+Lets now look at them one at a time. 
+
+**Memory mapped I/O**
+The device is addressed as a memory location. Something similar to memory mapped files. Where accessing a certain address and being able to update it results in us talking with the hardware device. 
+
+**Programmed I/O**
+This was the typical way OS interacted with the device. 
+When the main CPU is involved we refer to it as **programmed I/O** (PIO)
+The protocol was as follows (taken from the book)
+![[Pasted image 20260409232431.png]]
+So it had `4` steps. 
+- First, the OS waits until the device is ready to receive a command by repeatedly reading ther status register, we call this **polling** the device. 
+- Second, the OS sends some data down to the data regisrter 
+- Then the OS writes a command to the command register. 
+- FInally the OS waits for the device to finish by again polling it in a loop.**waiting to see if it is finished (it may gen an error code to indicate success or failure)**
+
+**Interrupt Driven I/O**
+Polling is inefficient as we are wasting the CPU time. So we solve this issue by using our intterupt idea. So instead of polling the device repeatedly, the OS can issue a request, put the calling process to sleep, and context switch to another task. When the device is finally finished with the operation, it will raise a hardware interrupt, causing the CPU to jump into the OS at a predetermined ISR(interrupt service routine) or more simply an **interrupt handler**. The handler is just a piece of the OS code that will finish the request and wake the process waitiing for the I/O 
+Therefore we go from this 
+![[Pasted image 20260409233118.png]]
+p refers to polling. `1` refers to the process 
+to this 
+![[Pasted image 20260409233153.png]]
+Where the CPU can work on job `2` instead. 
+*Note:* Interrupts are not always better than polling. 
+For example, imagine a device that performs its tasks very quickly: the first poll usually finds the device to be done with task. Using an interrupt in this case will actually slow down the system: switching to another process, handling the interrupt, and switching back to the issuing process is expensive. Thus, if a device is fast, it may be best to poll; if it is slow, interrupts, which allow overlap are best. 
+
+Another reason not to use interrupts arises in networks . When a huge stream of incoming packets each generate an interrupt, it is pos sible for the OS to livelock, that is, find itself only processing interrupts andneverallowing auser-level process to run and actually service the re quests. For example, imagine a web server that experiences a load burst because it became the top-ranked entry on hacker news. 
+In this case, it is better to occasionally use polling to better control what is hap pening in the system and allow the web server to service some requests before going back to the device to check for more packet arrivals.
+
+**I/O using Direct Memory Access (DMA)**
+DMA is extension of interrupt driven. 
+Unfortunately there is one other aspect of our canonical protocol (PIO) that requires our attention. In particular, when it wants to transfer a large chunk of data to a device, the CPU is once again over burdened with a task of copuing the data from the memory one word at a time. It looks something like this 
+![[Pasted image 20260409234221.png]]
+
+We can speed this up by using DMA
+![[Pasted image 20260410003207.png]]
+DMA is essentially a very specific device within a system that can orchestrate transfers between devices and main memory without much CPU intervention. 
+*Note:* So before as in, using PIO, the CPU writes to the registers exposed by disk controller word for word. Which makes the CPU busy throughout the time. 
+But now with the help of the DMA, all the OS needs to do is to program the DMA by telling it where the data lives in memory, how much data to copy and which device to send it to. Then OS is done and the CPU can proceed with some other work. The DMA would come back with an interrupt notifying that it is done. 
+Easy!!
+So now the above image would look like this 
+![[Pasted image 20260410003842.png]]
+DMA takes care of copying. Then the disk can then perform its I/O (aka copy from the buffer to the actual disk/device memory)
+
+## Linux Loadable Kernel Module (LKM)
+![[Pasted image 20260410004107.png]]
+![[Pasted image 20260410004115.png]]
+
+## Linux I/O
+The kernel provides common interface for I/O system calls 
+Devices are grouped into device classes 
+- Members of each device class perfrom similar functions 
+- Allows kernel to address performance needs of certain devices individually. 
+**Major** and **Minor** identifcation numbers 
+- Used by device drivers to identify their devices
+- Devices with the same **major** number are controlled by same **driver**
+- Minour nums enable system to distinguish between devices of same class. 
+In unix, all devices are represented as **special files** These special files are in the `/dev` directory. 
+**VFS** (Virtual file system)
+The job of the VFS is to take in the path to the special file, so something liek `/dev/mouse` and issue call to its appropriate device driver. 
+![[Pasted image 20260410004727.png]]
+Now for the two types of devices aka
+- Charchter device 
+- Block device
+Lets look at how Linux handles this for each case 
+**Character device**
+- Transmits data as stream of bytes
+- All registered drivers are stored in the `chrdevs` array (vector). 
+- Where each element contains the `char_device_struct` which has the driver name, major and minor numbers and a piinter to the driver's `file_operations` structure. 
+**Block device**
+- Kernel's block I/O subsystem contains number of layers. 
+- Modularise block I/O operatiosn by placing common code in each layer. 
+- Two primary stratergies used by kernel to minimise amount of time spent accessing block devices are 1. caching data and 2. clustering I/O operations. 
+- There is even Direct I/O to bypass the cache ![[Pasted image 20260410005315.png]]
+Look at the slides for the Linux I/O API. Dont really know how important it is. 
+Remember one thing. While reading make sure to use a **loop.** 
+## Questions
+![[Pasted image 20260410204931.png]]
+We could put the user permission in the User Level I/O layer. But problem is that user can circumvent that check as it is in user space. 
+
+# Disk Management
+![[Pasted image 20260410205845.png]]
+So we have **platers**, which are the circles. And a single platter is shown on the left. 
+A **track** is just one complete circle. So big track on the outside. Smaller track on the inside. Each track is then split into **sectors**
+The **read write head** moves up and down, while the plater keeps spinning. So we read everything. The platers spin together and the read write head move together as well. 
+Therefore at any time we are reading a list of tracks. Called a **cylinder**
+So the way it reads is the read write head moves up and down denoting the current track it is in. Then we find the correct sector by rotating and then we read the data. *Note* the data could be on adjacent tracks or somewhere completely different. 
+![[Pasted image 20260410211039.png]]
+
+![[Pasted image 20260410211116.png]]
+*Note:* The floppy disk has one plater but 2 surfaces so 2 tracks per cylinder. 
+Therefore in the seagate if we have 16 tracks we have 8 platter. 
+
+## HDD Addressing 
+Before we were using **physical harware address** with (cylinder, surface, sector)
+But this created problems as the old IBM computers often made an assumption that 6 bits for sector, 4 bits for head, 14 bits for cylinder. This limited to using 8GB max HDD.
+Modern days we use **logical sector addressing** or LBA (logical block address) where sectors are numbered consecutively from `0..n`
+![[Pasted image 20260410211727.png]]
+*Note:* Make it CONSISTENT for the exam. So say ohh yh I am using a disk so I am going to use powers of `10` 
+
+![[Pasted image 20260410215216.png]]
+
+## HDD delays 
+![[Pasted image 20260410231155.png]]
+So first we need to find the correct track. Remember the read write head needs to move top to down in order to find it. This is called **seek time**. This is the most expensive one. 
+So now once we find the track, now we need to actually find the correct sector
+**Rotational** **delay** is the time it takes to rotate and find the correct sector. 
+Finally now we need to read the data in the sector. 
+**Transfer time** is the time it takes to transfer data in the sector. 
+![[Pasted image 20260410215257.png]]
+
+![[Pasted image 20260411012425.png]]
+![[Pasted image 20260411012431.png]]
+Really easy. *Note:* In Case A for the next track we ignore the seek time. as the read head just needs to move to the next track. 
+And further *Note:* The performance lost because of the seek time. Scheduling is something that tries to fix this. 
+## HDD scheduling
+### FCFS (First come first served)
+![[Pasted image 20260411013412.png]]
+As expected, it is quite trash. This is exactly what we want to avoid. 
+### SCAN scheduling 
+Choose requests which result in shortest seek time in preferred direction. 
+- Only change direction when reaching outermost/innermost cylinder. 
+- Most common scheduling alogrithm
+**Disadvantage**
+- Long delays for requests at extreme
+![[Pasted image 20260411013618.png]]
+Well in order to do better (aka reduce the disadvantage a bit) we can use a **variant** by sweeping in **one direction** and then when we reach the end we go all the way to the start without reversing the direction. This effectively halves the worst case. 
+
+Baby question but yeah
+![[Pasted image 20260411015418.png]]
+
+## Linux HDD Scheduling 
+Disk is a block device 
+Driver keeps track of **list of requests** (cylinder to be read) like the queuue from above. 
+**Block device driver** identifies the operations that are supported by the device. 
+Block device driver would then give the list of request directly to the **disk controller**
+Then the disk controller would perform these Schduling alogrithms as it knows the geometry of the disk. Nice!
+
+And now for the actual scheduling algorithm Linux uses a variation of SCAN algrotihm  which attempts to merge requests to adjacent blocks. It further has two more interesting behaviour
+- **Deadline** **scheduler** ensures read is performed by a deadline to eliminate request starvation. 
+- **Anticipatory scheduler** adds in a delay
+    So why do we have this?
+    It is more likely for a process to read data from adjacent sectors in chunks. But our current scheduling algorithm would move across it (request from another process) making the next request from the process the worst case scenario. 
+    In order to fix this they add in a delay to make sure the process can send in all its requests then we would have a nice efficient way of reading the data. SMART!
+
+## SSDs
+![[Pasted image 20260411161120.png]]
+Made up of memory cells. Memory cells together become a page. Many pages become a block. 
+If Memory cell contains electrons, then it is `0`. If it contains none then it is `1`. 
+Voltage is sent through the memory cell, and if current is able to flow (aka no electrons blocking it) Then it is read as `1` otherwise `0`. It keeps increasing voltage till current can pass through sequentially. 
+Now SSDs are limited with the **number of writes**. More we write to a certain memory cell, more it gets weared off. So there is an algorithm whenever we do a write to load balance it. 
+## RAIDs
+The problem is Disk performance is not increasing as fast as CPU performance.
+Solution is to use **parallel disk I/O**
+RAID (redundant array of inexpensive disks)
+- Use array of pysical drives appearing as a single virtual drive
+- Stores data distributed over array of physical disks to allow parallel operation (called **striping**)
+- Uses redundant disk capacity to respond to disk failure. More disks mean lower mean time to failure (**MTTF**)
+### RAID Level 0 
+- Use multiple disks and spread out data. 
+- Disks can seek/transfer data concurrently. Also may load balance across disks
+- No redundancy. 
+- ![[Pasted image 20260411162915.png]]
+### RAID Level 1
+![[Pasted image 20260411163009.png]]
+Basically just mirrors it. 
+### RAID Level 5
+Uses block level distributed XOR
+Distributed parity information. This parity serves as error correcting code if any of the other disks die.
+![[Pasted image 20260411163454.png]]
+So if any one disk (cylinder) dies, then we can reconstruct it from the others. 
+The **parity block** is distributed as to improve writes, as writes can be done in another disk concurrently. Therefore writes can be made a bit more concurrently. But this adds more complexity. 
+![[Pasted image 20260411163623.png]]
+
+![[Pasted image 20260411164128.png]]
+## Disk Cache 
+Idea is to use meain memory to improve disk access. 
+**Buffer** in main memory for disk sectors. 
+- Contains copy of some sectors from disk 
+- OS mnages disk in terms of blocks. 
+Basically the buffer cache 
+![[Pasted image 20260411165423.png]]
+Remember disk is a block device. 
+And remember the buffer cache is in main memory (RAM)
+
+Now how do we repclace the blocks?
+![[Pasted image 20260411165630.png]]
+![[Pasted image 20260411165739.png]]
+![[Pasted image 20260411170124.png]]
+
+# File Systems
+File is named collection of data of arbitrary size. 
+
+
+
 
 # Important question to Practice
 ^460561
@@ -1040,3 +1343,5 @@ Just for fun. The above question is easy!
 ![[Pasted image 20260409164021.png]]
 ![[Pasted image 20260409164035.png]]
 The reference bit is initially set when adding it in. In exams we can just state the assumption. 
+
+![[Pasted image 20260411012425.png]]
