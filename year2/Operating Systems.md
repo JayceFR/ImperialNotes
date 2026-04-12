@@ -1317,8 +1317,188 @@ Now how do we repclace the blocks?
 
 # File Systems
 File is named collection of data of arbitrary size. 
+![[Pasted image 20260411170720.png]]
+We have normal files. 
+We have directory which is itself a **file**
+We have **special files** which are used to represent the I/O devices 
+We have **link devies**
+
+It needs to support the following functions 
+- Logical name to physical disk address translation. 
+    /home/me/.email -> disk 2, block 493
+- Management of disk space. 
+- FIle locking for exclusive access 
+- Performance optimsiation
+- Protection against system failure
+- Security. 
+
+## File Attributes
+We need to keep track of some metadata for files so in a struct or something 
+![[Pasted image 20260411171220.png]]
+![[Pasted image 20260411171228.png]]
+## Unix/Linux: File Attributes
+![[Pasted image 20260411233540.png]]
+
+## Space Allocation 
+File Size naturally variable.
+Space is allocated in blocks (typically `512 - 8192 byes`)
+- **Block size is too large**, then we are wasting space for small files (internal fragmentation)
+- **Block size is too small** -> waste space for large files. High overhead in terms of management data. High file transfer time (seek time >> transfer time)
+How do we access blocks that belong to a file?
+We have options 
+- **Contiguous file allocation** 
+- **Block chaining** 
+- **File (or block) allocation table (FAT)**
+- **Index blocks** 
+Lets look into them 1 after the other 
+### Contiguous File Allocation 
+Pleace file data at contiguous addresses on storage device 
+**Advantages**
+- Successive logical records typically phyiscally adjacent. 
+**Disadvantages**
+- External fragmentation 
+- Poor performance if file grow and shrinks over time. 
+- If file gorws beyond size originally specified and no contiguous free blocks available. 
+### Block Linkage (Chaining)
+Each block holds the pointer to the next block. 
+So in a directory we store the map from file to the pointer of the first block. 
+![[Pasted image 20260412144632.png]]
+![[Pasted image 20260412144645.png]]
+
+### FAT/BAT
+Same idea as above, but instead of storing the next pointer inside the block iteslf, we store these pointers in a centralised table, where we index based on the block number which maps to the next block number. **Array** so indexing would be O(`1`)
+*Note:* The size of each entry would be `4` bytes as it is an integer in an array. 
+![[Pasted image 20260412145515.png]]
+**Advantages**
+- Reduces number of lengthy seeks to access given record
+**Disadvantages**
+- But files become fragmented resulting in periodic defragmentation
+- Table can get very large 
+*Note:* This table is stored in the disk. 
+Good Example Question to proactice.
+![[Pasted image 20260412150043.png]]
+Well it is trivial for block linkage
+![[Pasted image 20260412150120.png]]
+
+For **FAT**, there are 1024 data bytes per block so each block of FAT in disk would have `1024 / 4 = 256` entries. 
+```
+Now the 1020th byte is on the 1st block. We would at max read only one disk for FAT (even when not cached) + 1 read for the actual data block. 
+So in total 2 reads. Easy!
+
+Now for the other case. 
+The 510,100th byte is on the 499th data block. 
+Now assuming every link from one entry to the next are within 512 then we can simply just load the first 2 data blocks. So read = 2 + 1 for data block. 
+Now for the worst case scenario, it could be that any block could refer to any other block next. So each lookup could cause a disk read. Therefore 499 reads + 1 for data block. 
+```
+### Index Blocks 
+So now we have the directory entry points to the **index block**
+**Index block:**
+- Contains list of pointers to data blocks (contain actual file content)
+```
+Directory entry → Index block
+
+Index block:
+[5, 12, 9, 20]
+
+Meaning:
+Block 5 → first part of file
+Block 12 → next
+Block 9 → next
+Block 20 → last
+```
+So now we have a direct lookup. 
+But now we have a problem, what if the file is huge? One index block wouldn't be sufficient. 
+Solution is to use some entries to point to more index blocks. 
+![[Pasted image 20260412160258.png]]
+So index blocks are quite similar to page table structures. 
+![[Pasted image 20260412194204.png]]
+So we have 
+- **Direct Pointer** -> Stores a pointer to the actual data block. 
+- **Single Indirect** -> Stores a pointer to a data block (which does not store data). Where each element in that data block refers to a separate data block. 
+- **Double indirect** -> Stores a pointer to a data block, where each element in it stores to another data block. From where each element contains a reference to an actual proper data block. 
+- **Triple indirect**  -> Same thing with three times. 
+Too easy!!!
+![[Pasted image 20260412195424.png]]
+*Tip:* Each indirect layer we go up, we can simply take the number of addresses to the power of that layr. 
+So say we have 128 addresses available 
+Then for single indirect it is 128. 
+For double indirect it is 128^2. Nice!
+![[Pasted image 20260412195622.png]]
+Answer can be found down in important questions to remember. 
+
+*Remember* **Inode is stored in the disk**. 
+![[Pasted image 20260412201219.png]]
+```
+So for the first one, we would need to access the first block (direct pointer) We need to load the inode from disk so (+1) then use the direct pointer, therefore 2 reads. 
+
+For the second question, we would need to access the double indirect. So 3 + 1 for inode = 4 reads in total. 
+```
+Easy!
+## Free Space Management 
+We need to manage storage device's free space. 
+- Quick access to free blocks for allocation. 
+2 ways
+- Free list
+-  Bitmap
+![[Pasted image 20260412231005.png]]
+
+![[Pasted image 20260412231015.png]]
+## File Directory Organisation
+**Directory** Maps symbolic file names to logical disk locations 
+Starts with the root directory `/` and then branches out downwards. 
+![[Pasted image 20260412231150.png]]
+**Mount**
+- Creates link in directory to directory in different file system 
+- So for example on another disk or remote server. So basically when we have multiple disks in Windows they are referenced by letters, like C: D:. But in unix eveything comes under the root directory. So we need a way to link. 
+![[Pasted image 20260412231406.png]]
+So the **root directory** is simply a table which maps **file names** to **inodes**.
+Easy!
+
+## Links 
+**Links**
+- Reference to directory/file in another part of File system 
+- Allows alternative names (and different locations in tree)
+
+**Hard Link**
+- Reference address of file (References the inode)
+- Its only **supported for files**. Cause if it was supported for directories it could create loops. You have two references to the same file. 
+- Here we simply just keep track of a reference counter. Which we decrement each time we close. So if it becomes 0 then we delete the fill. Simple **reference counting**
+**Symbolic (soft) link**
+- Reference full pathname of file/directory. 
+- Created as directory entry. 
+
+To build some more intuition about hard links and soft links. 
+![[Pasted image 20260413002915.png]]
+- When i hard link a file, both the files are pointing to the same inode. So modifying one would change the other. *Importantly* deleting one wouldn't delete the other as the internal inode is not freed (reference counting).
+- When you soft link, the softlinked file just stores a pointer to the file, so now deleting file would break the link as the file is no longer a valid path. 
 
 
+**Soft link vs hard link**
+![[Pasted image 20260412234220.png]]
+
+## Mounting 
+Combines multiple file systems into one namespace. 
+Basically combines everything into one tree. 
+
+Only supports **soft links** to files in mounter file systems. 
+*Why?* Well if it did supply hard links, so one file system would be storing the inode of the other filesystem. Reference counting is set. But now lets say we unmount, and if i delete in the hard linked file system, which stores the reference to the inode in other file system, it can't access it anymore so wouldn't be able to decrement the reference count. Basically we wouldn't always have access to the inode number in mounting. 
+
+File systems manage mounted directories with mount tables.
+*Note:* These mount tables is stored in the OS and would need to be done every time we **reboot** the computer. 
+
+**Mount point** is the point towards which you mount another file system. 
+## Linux ext2fs
+Linux's inode based file system. 
+Has an extra idea of **block groups** 
+![[Pasted image 20260413003811.png]]
+So it would try to store the same file in the same block. 
+**Idea** is to make sure even tho we can't get consecutive blocks, if we get neighbouring blocks then we have on average a faster write/read time. 
+So what I'm inferring is that instead of doing the continuous memory allocation, we kind of separate it into consecutive block groups so each block group contains continuos blocks. And now we can simply inside the block group we can use our index blocks. So even tho they are not continuous we are guaranteed they are close to each other (so less reads from Qs above). SMART!
+
+**Superblock** is the higher level one which contains information about the block groups. It would be like a bitmap as well. 
+![[Pasted image 20260413004440.png]]
+
+# Security 
 
 
 # Important question to Practice
@@ -1345,3 +1525,10 @@ Just for fun. The above question is easy!
 The reference bit is initially set when adding it in. In exams we can just state the assumption. 
 
 ![[Pasted image 20260411012425.png]]
+
+![[Pasted image 20260412195643.png]]
+![[Pasted image 20260412195652.png]]
+
+
+![[Pasted image 20260412201219.png]]
+![[Pasted image 20260412201608.png]]
