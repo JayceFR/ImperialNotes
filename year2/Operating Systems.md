@@ -1499,6 +1499,103 @@ So what I'm inferring is that instead of doing the continuous memory allocation,
 ![[Pasted image 20260413004440.png]]
 
 # Security 
+## Goals
+- **Data confidentiality** -> Who can read the data? We dont want thieves stealing our data 
+- **Date integrity** -> Who can write to the file? We dont want destruction of our data 
+- **System availability** -> We want the system to be available. We dont want denial of service. 
+
+**Policy vs Mechanism**
+![[Pasted image 20260413004915.png]]
+Oh look at that, straight copy from the book!!
+
+Different policies
+- **People security**: Insider, Social engineering attacks 
+- **Hardware security**: steal hard disk to get at data 
+- **Software security**: exploit bug to become superuser. 
+Lets look at eeach one of them in detail
+### People security 
+![[Pasted image 20260413010935.png]]
+
+### Hardware security 
+![[Pasted image 20260413011217.png]]
+
+### Software security 
+![[Pasted image 20260413011452.png]]
+
+## Access Controls 
+We want to verify identity of users (principals). 
+Allow prinicipals to perform action only when authorised. 
+![[Pasted image 20260413011731.png]]
+![[Pasted image 20260413011852.png]]
+How do we protect passwords?
+**One Way cryptographic hash function**
+There are some mathematical function that take a piece of text and generate another text. Baiscally a hash function. 
+## Authorisation 
+**Princiole of least privellege**
+- Give user minimum rights required to carry out assigned task 
+- Unfortunately more rights are given by default in order to provide convenience. 
+
+**Protection Domains**
+We have set of **access rights** which is defined as a set of **objects** and **operations** permitted on them. 
+Now we group these access rights into **domains**
+So principal (user) executing in domain D has access rights specified by D. 
+Easy!
+So for example, something like this 
+![[Pasted image 20260413122707.png]]
+So a user in domain`1` has read access to file 1 and file 3. Nice!
+
+They way that this authorization policy is normally expressed is as a **access control matrix**
+![[Pasted image 20260413122850.png]]
+Objects could be files and so on. 
+*Note* Principal 2 can't access object 1, therefore has no entry in row 1 column 0.  
+
+**But now could we use access control matrix to implement this policy?** 
+(**Disadvantages**)
+- If we represent every object in this matrix. It would be very large to be in memory. 
+- And then the matrix is even very sparse. 
+- Could even be a performance bottleneck. 
+
+We have two options to implement this access control matrix 
+- **Access Control Lists** -> More common in many OS. 
+- **Capabilities.** 
+
+### Access Control Lists 
+Its just a **column** from the Access control matrix
+So it represents the access to that specific object. 
+So an ACL stores with each object 
+- The prinicipals that can access it 
+- The operations each principal can perform on it. 
+
+So on **Linux** 
+- Users are principals. Each user has a unique user ID (uid). 
+- Super user **root** has UID `0` and can access any resource. 
+- ![[Pasted image 20260413125309.png]]
+- We even have **Groups**. So each user can belong to one or more groups but each file can only belong to one group. 
+- Access rights are **read (R), write(W), execute (X)**![[Pasted image 20260413125801.png]]
+- *Note* Directories are files in linux. So the read, write and exeute on them is a bit different. So they are overloaded. 
+- Really *important* ![[Pasted image 20260413125609.png]]
+- So the first one is the file type. Then we have 3 logs of 3 bits. Where each set contains from {r,w,x,**s,t**}. And goes from file owner, group member, everybody else. 
+- There are 2 more interesting permission bits, `s` and `t` Lets look at it in a bit more detail 
+	Say we are executing a program. So if user A executes a program (like launch a game or something), the program would run with A's privellege. **So the prorgram can only access files to which A has access**
+	But what about the passwd program, which would need to modify the password file which is only accessible by the **root**. Well we are stuck now. But the **setuid** bit `s` saves us. 
+	![[Pasted image 20260413130638.png]]
+	So instead of the execution bit for the owner of the file, it is set to `s`. Meaning the program would launch with the owner's privelleges (root).  and can be run by any user. 
+	**SUID (set user id) bit**
+    - File switches effective UID to file owner when executed. 
+    - Increases privilleges when using system programs. 
+
+    Now each process has `3` ids. 
+    - **Real id** 
+    - **Effective id** 
+    - **Saved id** 
+    ![[Pasted image 20260413131504.png]]
+    So back in our example, the real id would be lets say user 2. The effective is root (so id = 0). Saved id would be `2` as well. 
+
+    Entire workflow is as follows
+    ![[Pasted image 20260413131623.png]]
+    Easy!
+
+### Capabilities 
 
 
 # Important question to Practice
