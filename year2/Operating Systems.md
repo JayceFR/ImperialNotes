@@ -1596,6 +1596,62 @@ So on **Linux**
     Easy!
 
 ### Capabilities 
+Its a **row** from the Access Control Lists. 
+So its something like a user can have a key to access the file where the key would internally map to the access right (handled by the OS). 
+Example is something like file descriptors. Where the user only has the fd number (key) but the internal mapping would be handled by the OS. 
+![[Pasted image 20260413154300.png]]
+Capability table per process. 
+### ACLs vs Capabilities
+**Principle of least privillege**
+- Capabilities work best here. 
+- Why? Lets say program is started by user A using ACLs, then program A would have all the permissions for every file A has access to. Thats a lot of permissions. Instead, with capabilities what we have is, we give to the program only the capabilities it would need ![[Pasted image 20260413160812.png]]
+
+**Revocation**
+- Means, operation through which we take away the permission
+- Removing permission for ACL is trivial, go look at that file in the file system. 
+- Removing permission in Capabilites would require removing that file from all the capability tables. We have 1 capability table per process. Very expensive scan. 
+- Therefore ACL is better for revocation as we only need to change one table. 
+*Important* nuance with **revocation for UNIX**. We use a mixture of both ACL and capability tables. While opening files we check with ACL, then the process would keep track of the fd (capability table). Now the problem comes when we are removing permission, we would modify the ACL, but the fd can't be changed as they are per process so they retain the same permission. Only when we open it newly, this permission change would be affective. Nice!
+
+**Rights Transfer**
+Its one process that has access to a file giving the same permission to another process that doesn't have access to a file. 
+Right transfer is much more effective for capabilities. As it just needs to pass the pointer around. 
+Something like hard link, but way different. 
+- Hard link: Here is a new way to find the file. Any process can use it. Modifies the file system. 
+- Capability: Here is a permission token to use the file that I have opened. 
+Huge difference 
+So capability is like a hard link but without the concept of being permanent and does not let use reopen the file. 
+
+**Persistence**
+In order to persist the ACL, we need to persist the entire ACL lol. 
+But in order to persist the capability system, we need to persist the capabaility table for evey  process. Which is quite mental to think about as some processes may not live when rebooted. 
+
+Upto now, we have been talking about how to access resoruces. But we haven't talked about higher level policies that we can build on top of that. 
+## DAC vs MAC
+**Discretionary Access control (DAC)**
+- Principle determine who may access their object 
+**Mandatory Access Control (MAC)**
+- Precise system rules that determing access to objects. 
+
+Linux uses DAC by default. 
+We could install SE Linux which is an addon to linux that makes it MAC. 
+Lets look at two classic MAC policies.
+- Bell -La Padula Model
+
+**Bell - La Padula Model**
+- Objects and prinicipals have assigned security level. E.g unclassified, confidtential, top secret. 
+- Two rules (read down, write up). So I can send data to my boss. And i can read data from any process below me. 
+- We cant protuct integrity. We can corrupt data. 
+- ![[Pasted image 20260413165917.png]]
+**Biba Model**
+- We can control integrity but can't control confidentiality. Basically the opposite to the Bell La Padula Model. 
+- Read Up. Write down 
+- ![[Pasted image 20260413165901.png]]
+
+## Design Priniciples for security 
+![[Pasted image 20260413170023.png]]
+
+![[Pasted image 20260413170135.png]]
 
 
 # Important question to Practice
