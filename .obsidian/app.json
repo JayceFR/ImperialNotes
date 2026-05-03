@@ -2,9 +2,12 @@
   "spellcheck": false,
   "attachmentFolderPath": "imgs",
   "pdfExportSettings": {
+    "includeName": false,
     "pageSize": "A4",
     "landscape": false,
-    "margin": "0",
+    "margin": "2",
     "downscalePercent": 100
-  }
+  },
+  "readableLineLength": true,
+  "strictLineBreaks": false
 }

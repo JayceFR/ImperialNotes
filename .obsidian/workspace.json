@@ -11,13 +11,32 @@
             "id": "232f085895a563dd",
             "type": "leaf",
             "state": {
-              "type": "graph",
-              "state": {},
-              "icon": "lucide-git-fork",
-              "title": "Graph view"
+              "type": "markdown",
+              "state": {
+                "file": "output/Networks.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Networks"
+            }
+          },
+          {
+            "id": "807f8030a71edad1",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "year2/Networks.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Networks"
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -176,19 +195,26 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "232f085895a563dd",
+  "active": "807f8030a71edad1",
   "lastOpenFiles": [
+    "imgs/Pasted image 20260503232414.png",
+    "imgs/Pasted image 20260503210511.png",
+    "imgs/Pasted image 20260503205944.png",
+    "imgs/Pasted image 20260503205105.png",
+    "imgs/Pasted image 20260503204719.png",
+    "imgs/Pasted image 20260503204436.png",
+    "imgs/Pasted image 20260503203736.png",
+    "imgs/Pasted image 20260503203720.png",
+    "imgs/Pasted image 20260503203255.png",
+    "imgs/Pasted image 20260503203058.png",
+    "imgs/Pasted image 20260503202714.png",
+    "output/Networks.md",
+    "year2/Networks.md",
+    "output/attachment",
+    "output/Networks.html",
+    "output",
     "year2/Operating Systems.md",
-    "imgs/Pasted image 20260413170135.png",
-    "imgs/Pasted image 20260413170023.png",
-    "imgs/Pasted image 20260413165917.png",
-    "imgs/Pasted image 20260413165901.png",
-    "imgs/Pasted image 20260413160812.png",
-    "imgs/Pasted image 20260413154300.png",
-    "imgs/Pasted image 20260413131623.png",
-    "imgs/Pasted image 20260413131504.png",
-    "imgs/Pasted image 20260413130638.png",
-    "imgs/Pasted image 20260413125801.png",
+    "year2/Machine Learning.md",
     "Untitled.md",
     "year2/Compilers.md",
     "Computing Practical One/kotlin/Important stuff to remember.md",
@@ -197,9 +223,7 @@
     "Peg.md",
     "Mechanism.md",
     "useful stuff/Numpy.md",
-    "year2/Machine Learning.md",
     "useful stuff/System Design OOFFFF.md",
-    "year2/Networks.md",
     "year2/Scala.md",
     "year2/SED.md",
     "useful stuff/Latex.md",
@@ -213,15 +237,11 @@
     "Problem Sheet 2.md",
     "year2/AlgoDesign",
     "Computing Practical One/haskell/Important HOFs.md",
-    "Computing Practical One/haskell/Good Questions.md",
     "Untitled",
     "year2",
     "useful stuff",
     "imgs",
     "Computing Practical One/kotlin",
-    "Computing Practical One/haskell",
-    "Computing Practical One",
-    "Databases/SQL",
-    "Databases"
+    "Computing Practical One/haskell"
   ]
 }

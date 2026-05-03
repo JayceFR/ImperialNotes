@@ -1,5 +1,5 @@
 # OSI Model 
-![[Pasted image 20260118224607.png]]
+![](attachment/903e5a54805762b4d9cf302728cf8972.png)
 Layer 5 is the *Application* layer 
 Layer 1 is the *Physical* layer 
 # Week 3
@@ -10,7 +10,7 @@ Different processes may be running on different end systems. so possibly on diff
 
 **Process and Hosts**
 An end system (host) may run multiple programs which run multiple processes. 
-![[Pasted image 20260118225851.png]]
+![](attachment/a5f039a6e3f13191132f5af1fab96cae.png)
 A process is addressed within its host by a *port number.*
 We can have only one application use one port at any given time on the same machine. If we want to be able to run two applications and each of them run on the same port, we would require 2 IP addresses which requires 2 NIC cards, which is feasible. 
 
@@ -23,7 +23,7 @@ Based on idea of hypertext and hyperlinks.
 HTTP became extremely successful tho it is just a glorified version of FTP.
 Simplicity is what made it popular. 
 
-![[Pasted image 20260118230838.png]]
+![](attachment/237b78bc0abb035def3c39d8aaf39b4e.png)
 
 **HTTP**
 Uses a connection oriented transport mechanism (TCP).
@@ -37,21 +37,21 @@ So in the first version of HTTP used *One TCP connection per object*. So what it
 So HTTP/1.1 introduced *persistent connections*. 
 It used the same TCP connection by the client to issue multiple requests and by the server to return multiple replies and possibly multiple objects. The default behaviour is to use persisitent connections. If the client then says 'close' in the request and response indicates the intention, of the cllient and the server to not use a persistent connection. 
 
-![[Pasted image 20260118231954.png]]
+![](attachment/0b15b19b062765b1bfd401d694bbfbe8.png)
 
 This is one way of using the persisitent connection. 
 But we can be a bit more efficient by *pipleining* our requests 
-![[Pasted image 20260118232041.png]]
+![](attachment/45f00ae85df53c4e377b8833cde5a19f.png)
 
 Protocol features 
-![[Pasted image 20260118232246.png]]
+![](attachment/0df5f1a6cd6cedaabc1d661fc886b70a.png)
 
 HTTP/2 is better 
-![[Pasted image 20260118232404.png]]
+![](attachment/df9eeb931ccb39b3738caf033f35a1fc.png)
 
 **Request**
 
-![[Pasted image 20260118232641.png]]
+![](attachment/ef2132653adbd1a0b28ef346fabf61ee.png)
 
 *Remember:* The two carriage returns at the end is absolutely mandatory. 
 
@@ -63,18 +63,18 @@ PUT requests that the enclosed object be stored under the given URL. So its what
 DELETE deletes the given object
 
 **Response**
-![[Pasted image 20260118233124.png]]
+![](attachment/8bf5e0d87b7fc6db061fe668dc7ab129.png)
 
 Headers for CW
-![[Pasted image 20260118233238.png]]
+![](attachment/9c458931862077cab04696dcf3f3e716.png)
 
 Status codes
-![[Pasted image 20260118233308.png]]
+![](attachment/456725a23f6be96ad9c1bdd2ddfcfae7.png)
 To memorise
-![[Pasted image 20260118233319.png]]
+![](attachment/801770024d2ac24b539ca96def2a2d37.png)
 
 ## Web Caching 
-![[Pasted image 20260118233922.png]]
+![](attachment/4130bdf9d9e1e16d59d88c0f06d4cc37.png)
 
 proxy is basically a cache. lol 
 
@@ -88,16 +88,16 @@ Problems
 3. Data freshness
 
 HTTP uses *proxy*
-![[Pasted image 20260118234356.png]]
+![](attachment/7de1259252dfcdceb947ca2efc0821b1.png)
 It further supports headers that can request to go and fetch new data from the server host. 
 
-![[Pasted image 20260118234507.png]]
+![](attachment/6ff609a5505b361c9806f621e6bfc4df.png)
 
-![[Pasted image 20260118234516.png]]
+![](attachment/69bca0def67b8c1822c16d3a20b2e777.png)
 Please dont give me cached objects lol.
 
 More control
-![[Pasted image 20260118234627.png]]
+![](attachment/be1a38f7c8eec5427632eaa0bbc599da.png)
 
 **Cookies**
 HTTP is stateless protocol. So how do we implemente a shopping cart, or give it some state?. 
@@ -115,7 +115,7 @@ It basically gives state to the stateless HTTP.
 
 **Scripting**
 
-![[Pasted image 20260118235610.png]]
+![](attachment/c8b608601517c7f06cf4162be80ae385.png)
 
 ## CDN
 *Problem* How to stream content to hundreds of thousands of simultaneous users?
@@ -156,21 +156,21 @@ Let the client decide, give the client a list of several CDN servers, client pin
 
 #### Netflix Case Study 
 Netflix uses their own CDN, OpenConnect 
-![[Pasted image 20260131162339.png]]
+![](attachment/63bca53e51de2084aa73d17906ac336f.png)
 
 Here is their own version of both enter deep and bring home. OCAs are just Open connect access point. 
 So we would get a better Netflix exchange if we are in certain ISPs
 
 ## Email 
 Its Asynchronous 
-![[Pasted image 20260131162858.png]]
+![](attachment/38f69eb51efd750912f8208c77608c12.png)
 
 #### Architecture 
-![[Pasted image 20260131163040.png]]
+![](attachment/8920000b446a56fc07b9eee0321edbe4.png)
 Oooo Queue.... Kafka
 
 SMTP
-![[Pasted image 20260131164806.png]]
+![](attachment/f5293169b9d52f13c0ec051c3a8822a4.png)
 
 # Week 4 - Transport Layer 
 ## TCP/UDP 
@@ -198,14 +198,14 @@ Jayce -> The transport layer tries to fix these two issues.
 Other Layer 4 Protocols: QUIC, UDP-Lite, DCCP/UDP, SCTP, RSVP/NSIS
 
 ### Terminology Agreement 
-![[Pasted image 20260131165950.png]]
+![](attachment/6cd097a779fb06b4dffb86f6551f8136.png)
 
 Int TCP layer the data is broken into TCP segments by a process called (Segmentation)
 In internet layer the process is called fragmentation which means a maximum size thats allowed. 
 
 **Multiplexing**
 Motivation:
-![[Pasted image 20260131170248.png]]
+![](attachment/b9f783b8fb4ce47ede936548ba28b012.png)
 How would you say these requests apart?
 
 Solution: Port numbers 
@@ -214,9 +214,9 @@ Each application running on a host is identified by a unique port number.
 port numbers are simply cross platform process identitifiers 
 
 So how to identify a socket connection 
-![[Pasted image 20260131170558.png]]
+![](attachment/8c324619eccc043749681edae475a9cb.png)
 
-![[Pasted image 20260131171431.png]]
+![](attachment/9185ceea4768166553a9ff5868cbe4e2.png)
 
 Ephemeral for clients basically are the ports which the client would open to connect to some web server. 
 
@@ -257,17 +257,17 @@ RECEIVE -> Receive data over connection
 CLOSE -> Release the connection. 
 ```
 
-![[Pasted image 20260201134112.png]]
+![](attachment/dd415d7ed553b873ae1685b945ffedf2.png)
 
 Q. So now whats different when it comes to connection-less communication?
 A. There is no connection in UDP, i.e. no need for listen, accept, connect. You can still close the file pointer
 
 Simple Client/Server code in Java 
-![[Pasted image 20260201135657.png]]
+![](attachment/39bde13ada91e9bfe0c304474af67cd6.png)
 *Note* the server code would be blocked in the accept statement. And then we wait for some client to cnnect to us. 
 The problem with the above one is that we would need to close the connection before opening the next. So at any point in time it can only serve one client. 
 So in order to serve multiple clients at the same time, we would need to use threading.
-![[Pasted image 20260201135943.png]]
+![](attachment/ac1998f9ca07dbd3dc3dbd1357e9964a.png)
 
 **TCP Segments**
 TCP data are transmitted within TCP segments 
@@ -277,7 +277,7 @@ TCP segments are transmitted with a Network Layer Protocol (IPv4)
 So well how do we determine the largest link layer frame? With Path MTU discovery (PMTUD ) to determing the largest link layer frame that can be sent on all lnks from the sender host to the receiver host. 
 
 **Inside the TCP**
-![[Pasted image 20260201141240.png]]
+![](attachment/aae44456bcf96ec05ca5a5723821e457.png)
 *TCP Header*
 Source and destination ports (16 bit each): application identifier 
 Sequence number (32 bits) Used to implement reliable data transfer 
@@ -289,7 +289,7 @@ Optional and variable length options field: may be used to negotiate protocol pa
 *Sequence Numbers*
 They are associated with bytes in the data stream. IMPORTANT: THEY ARE NOT WITH SEGMENTS, ie it is NOT a packet numbering system
 The sequence number in a TCP segment indicates the **sequence number of the first byte carried by that segment**
-![[Pasted image 20260201142214.png]]
+![](attachment/042bc91841a22e5b1e7a309395fc5cae.png)
 So these segments would have the following sequence number 
 `1 1025 2049 3073`
 BUT this is not how it works always 
@@ -305,14 +305,14 @@ An acknowledgement number represnts the first sequence number not yet seen by th
 *Note* its not the last sequence number seen by the receiver, but the first one it expects to see next!!
 Important detail!
 Lets look at an example to make this a bit more clearer 
-![[Pasted image 20260201144227.png]]
+![](attachment/c1899638e00e01171c21548cf0c74f78.png)
 So first off we can see the ISN is 1200. Nice! 
 Now notice the second line, we are sending bytes from `2200 - 2699 (inclusive)`
 So the Ack returned back is `2700` Which is the first byte B requires to see next! 
 Nice!
 
 So now remember TCP connnection consists of a full duplex link, therefore there are two streams. i.e two different sequence numbers 
-![[Pasted image 20260201144621.png]]
+![](attachment/a825d4b9c97bf218e28af1f5fd9fbeb8.png)
 We can see how the Seq and Ack are being interchanged by each one acknowledging oh i have that byte and then requesitng can you give me the other byte. 
 Note, the acknowledgements are just piggybanked on the actual segment header 
 
@@ -324,12 +324,12 @@ The server responds with anoter SYN TCP segment, which also has the ACK flag (Ac
 Finally the client responds with an ACK (Acknowledgement) including the first unseen server SEQ# and the clients new SEQ#
 
 For disconneting, we would use a FIN rather that SYN 
-![[Pasted image 20260201185139.png]]
+![](attachment/fbb6aeb5c0193a7553fe3e51c1b4c37b.png)
 
 With numbers it would look something like this 
-![[Pasted image 20260201185238.png]]
+![](attachment/259cdd3e7c35b230933de84f59542d1d.png)
 
-![[Pasted image 20260201185312.png]]
+![](attachment/9ff0638abd7cbc94c09f5879ee8c5475.png)
 
 ### UDP 
 UDP provides only the two most basic functions of a transport protocol. 
@@ -369,11 +369,11 @@ States represent the state of a protocol.
 Transitions are characterised by an event/action label.
 `event: typically consists of an input message or timeout`
 `action: typically consists of an output message`
-![[Pasted image 20260209112524.png]]
+![](attachment/f479502b8468ed38084db8d7c67dacb5.png)
 So why is there a fin_wait2?, well the reason is because we have completed talking but the other side hasn't completed yet... we need to wait for them to send a fin and we need to acknowledge it. 
 
 The other side 
-![[Pasted image 20260209112842.png]]
+![](attachment/ef0fefa89f8702bee803d2c90e30b243.png)
 
 ### Noisy Channels 
 Reliable TCP over a network with bit errors. Ever so often a bit might be modified during transmission (a bit might be flipped) however no packets will be lost. 
@@ -381,18 +381,18 @@ Therefore the reciever must be able to know when a received packed is corrupted 
 Then the receiver must be able to alert the sender that a corrupted packet was received. 
 Sender must then retransmit corrupted packes.
 We can do this by using Acks! 
-![[Pasted image 20260209114721.png]]
+![](attachment/db09bd9c736d7bb7dc68d72bd85498a5.png)
 here is the other case, where the ACK may not be sent properly
-![[Pasted image 20260209114803.png]]
+![](attachment/2f6e0ebf21594728d9aeaf35274361f6.png)
 But now if the timeout is a bit too *long*, we would loose valuable time 
 And if it is too *short* we might receive overlaps :( like the example below 
-![[Pasted image 20260209114959.png]]
+![](attachment/4f4d4bfce1c03047e5006a2a8fe1d2d0.png)
 We are wasting bandwith!
 There are some more stuff in the slides, i.e. the state diagrams of how these connections actually work. You might wanna look into that if you are intereseted future Jayce!
 
 ## Headers
 *Note:* For ethernet (layer `2`) The checksums are at the footer. 
-![[Pasted image 20260218112851.png]]
+![](attachment/daecc042a8439356d38336f94b2f3b90.png)
 
 ### Detecting Congestion 
 If all traffic is correctly acknowledged, then the sender assumes there is no congestion. We know that!! 
@@ -404,7 +404,7 @@ The server assumes that the network is congested when it detects a segment loss 
 **TCP flavours**
 There are different algorithms that are used for TCP congestion based on the flavour of TCP used. 
 Here are some 
-![[Pasted image 20260218114851.png]]
+![](attachment/ea1a3904030d617475abe761c80c3c91.png)
 
 These algorithms combine various characteristics. e.g
 1. Tahoe: Slow Start, AIMD, Fast Retransmit 
@@ -412,7 +412,7 @@ These algorithms combine various characteristics. e.g
 3. Vegas: Congestion Avoidance
 
 The TCP protocol described so far is often referred to as **TCP RENO**
-![[Pasted image 20260218115248.png]]
+![](attachment/4e0740559673395bf8e5dac379a12d18.png)
 
 COLD 
 
@@ -434,7 +434,7 @@ Some terms
 **Congestion Window** 
 The sender maintains a Congestion Window (W)
 Congestion window is how many bytes I can send before waiting for an acknowledgement. So like a window. That number is an *INTEGER* 
-![[Pasted image 20260218123544.png]]
+![](attachment/b4fe7a29794011239cf1f2666c432c0c.png)
 
 So its basically like the space in between where it can send some more bytes of data before stopping and waiting for acknowledgement to free up the window. 
 So if `W = n bytes` Then the number of packets that can be sent before really waitining for ACKs is `n / MSS` where MSS is the maximum segment size. 
@@ -470,7 +470,7 @@ Now the window is full agian.
 ```
 Nice!
 
-![[Pasted image 20260218123700.png]]
+![](attachment/2cf1a1d4a54db90e1ae49ecf627bbb87.png)
 We will look at Congestion Window and Receiver Window in a bit. 
 
 **Action**
@@ -510,23 +510,23 @@ while connection_alive:
 		mode = SLOW_START
 ```
 This below picture describes it in a bit more detain 
-	![[Pasted image 20260218132300.png]]
+	![](attachment/62a729aeeb3e6c7619ff18483998c7f1.png)
 So we got upto `4` but now someting bad happens. So we move to congestion avoidance. 
 
 2. Congestion Avoidance 
-	![[Pasted image 20260218144541.png]]
+	![](attachment/64eb35194fb7959479562be60b5678ff.png)
 	So *Note* now that we are just incrementing W by 1 every RTT instead of every Ack received. So becomes linear now. 
 	The *formula* is done per **ACK** received itself. Really important, dont misunderstand the formula only works per RTT. For per RTT you can just add the MSS directly. *The MSS / W takes care of this when applied per ACK*
 	This process continues until something happens agian. 
 	Example 
-		Suppose W = `14600` and MSS = `1460` then the sender increases W to `16060` after `10` acknowledgements  Why is this so? 
+		Suppose W = `14600` and MSS = `1460` then the sender increases W to `16060` after `10` acknowledgements. Why is this so? 
 		![[Pasted image 20260502193856.png]]
 		so with that we can easily derive 
 		![[Pasted image 20260502193926.png]]
 
 3. Additive Increse and Multiplicative  Decrease 
 	Stands for AIMD
-	![[Pasted image 20260218150132.png]]
+	![](attachment/6b832c47ae9012d5a00d6aaf67673928.png)
 	So basically after SS -> CA, if we again find some packet loss then the TCP would half the congestion window. 
 	
 4. Reaction to timeout events (based on protocol algorithms)
@@ -534,9 +534,9 @@ So we got upto `4` but now someting bad happens. So we move to congestion avoida
 	timeout without an ACK -> loss segment -> retransmission 
 	How long to wait for acknowledgements?
 	Timout interval T must be alrger than the RTT, so as to avoid unnecessary retransmissions. 
-	However, T should not be too far from RTT, so as to detech and retransmit lost segments as quickly as possible. 
+	However, T should not be too far from RTT, so as to detect and retransmit lost segments as quickly as possible. 
 	TCP sets its timeouts using the smoothed RTT (SRTT) and the RTT time variation (RTTVAR):
-	![[Pasted image 20260218150711.png]]
+	![](attachment/5a7155810e1b64be057d32cf9ff37b99.png)
 	TCP controls its timout by continuosly estimating the curernt RTT. 
 ****
 Ok so now lets say we identified something went wrong and we need to retransmit. 
@@ -544,22 +544,22 @@ How do we doo that?
 **Fast Retransmit**
 Agreement: `3` duplicate ACKs are interpreted as a NACK (Fast Retransmit)
 *Note:* both timeout and NACKs singal a loss, but they say different things about the status of the network.  A timeout indicates congestion. While a NACK is just saying the sender is certainly alive and is responding.. its just that it hasn't received its data yet. 
-![[Pasted image 20260218151513.png]]
+![](attachment/a3eb4bc974daefed178bcc56702e56f6.png)
 *Note* the four identical ACKs. basically 3 duplicates of the first proper ACK. 
 
 **Fast Recovery**
-![[Pasted image 20260218151957.png]]
+![](attachment/6f3e42aaaed88564384d34a0bdd0ab75.png)
 *Note:* Timout starts all the way from SS, while NACK just does the AIMD thing. 
 This graph summarises what we know till now. 
-![[Pasted image 20260218152050.png]]
+![](attachment/d7ea3db2a248a5ae5ef92cba31b07276.png)
 *Note:* Every time we have a SS, the grap is exponential. AS EXPECTED
 EASY!!
 ****
 **Sliding Window**
 Instead of a normal window, some special people might prefer using sliding window. 
-![[Pasted image 20260218152504.png]]
+![](attachment/e03402b6f63e9441f27dc9221dae1363.png)
 Its harder to implement but does increase performance. Again for special people.
-![[Pasted image 20260218152556.png]]
+![](attachment/31e0ff0d01e156a9208128f9693325ca.png)
 
 ### Flow control vs Congestion control 
 We have seen congestion control till now. 
@@ -567,29 +567,29 @@ We have seen congestion control till now.
 **Flow control** aims not to overflow the *receiver*. 
 So now we as senders have a **congestion window** to know when to wait for ACKs and not full send our data to the internet. 
 The receivers can have a **receiver window** to let the sender know if it is full and can't take it anymore. 
-![[Pasted image 20260218153719.png]]
+![](attachment/c25c12e57995d06e3127c87e6bf5e5ed.png)
 The receiver along with the acknowledgment sends the maximum number of bytes that may be sent (Receiver window)
 That's why remember we initally set W to be the min of congestion window, receiver window. 
 A window size of `0` is legal, it means that no more segments can be sent. *Ping* is still allowed 
 ### Wireless TCP (pre-WIfi)
-![[Pasted image 20260218154404.png]]
+![](attachment/0677e0b8d0986e4a07cedeaed334cb5c.png)
 ### Network Usage 
 **Utilisation factor**
-![[Pasted image 20260218155012.png]]
+![](attachment/c2f6b9fd644b8b4ac4f30dcf35169450.png)
 Exmaple:
-![[Pasted image 20260218155037.png]]
+![](attachment/320f637f64bdf31aa0e3d162e562f527.png)
 
 We have one more formula for the same thing but different numbers provided
-![[Pasted image 20260218155312.png]]
+![](attachment/c58846d6f33592d14184d1855d6d0fed.png)
 
 Final practice question 
-![[Pasted image 20260218155409.png]]
+![](attachment/35e60b8b841d4955ee9d88b48b9778d8.png)
 My ans: `SS -> CA -> NACK -> CA -> Timeout -> SS`
 Its correct, lets goo chat!!!
 # Week 5 - Security 
 Part one notes are not taken! Oh noo!
 Lets say a user wants to access a resource through the internet. 
-![[Pasted image 20260209115543.png]]
+![](attachment/fdc38dfd6c58082d3443b7b41dbb3ed7.png)
 We need to first maintain *access control*. 
 Only certain users are allowed access to resource 
 *Authentication* User knows that the resource is exactly what it says it is. Vice versa
@@ -598,11 +598,11 @@ Only certain users are allowed access to resource
 *Non repudiation* Users can't deny communication took place. 
 ### Access Controls 
 There is a *guard* sitting infront of the request to invalidate requests that are from different geographical places 
-![[Pasted image 20260209121144.png]]
+![](attachment/a83b74f61cce72916392558e41f52949.png)
 
 So what are these guards, well it can be Firewalls
 *Firewalls* control access to the network, a security gate between the internal and external networks. 
-![[Pasted image 20260209121713.png]]
+![](attachment/72895c4037a4f4dadf2ff32f81c01a95.png)
 
 **Firwall Components**
 1. Application level gateway: runs on the host, only protects that host 
@@ -613,28 +613,28 @@ So what are these guards, well it can be Firewalls
 	2. stateful: remembers connections and checks contents of current andprevious packets
 
 So without a firwall anyone can attack you!
-![[Pasted image 20260209124022.png]]
-Wise words from future Jayce: Well the above statement doesn't really hold if we are using a NAT. *Note:* The Ips' of the host in the private network are public so are exposed to the internet. While using a NAT we would have local IP addresses that would share the same ip of that of the router. 
+![](attachment/5e314b54c23e073006105051547ffcbe.png)
+Words from future Jayce: Well this is the case when there is no NAT in play. If there is a NAT in play then the above statement doesn't really hold 
+
 But with proxy 
-![[Pasted image 20260209124135.png]]
-So over here the enemy and friend would only have access to the proxy's ip and not that of the host. 
+![](attachment/d4331a564e253c12d047d9f1d9301c29.png)
 
 **Bastion host**
 Bastion host in the above example is just a proxy. 
 So its a system that expects to be attacked! 
 It performs auditing/logging. It runs a trusted/secure OS. Adminstered via a dedicated terminal. 
-![[Pasted image 20260209124329.png]]
+![](attachment/1bb74c155cd7efa21bbbc640a1f3f8ad.png)
 
-![[Pasted image 20260209124443.png]]
+![](attachment/2fd316532ea4c7541780bd182f81c133.png)
 
 **Access Control Lists (ACL)**
 Basically a list of rules that suggest how data should transfer between packets. 
-![[Pasted image 20260209124523.png]]
+![](attachment/965e297b65c4a8459f76ef9eb809c181.png)
 Example of an ACL in action
-![[Pasted image 20260209125129.png]]
+![](attachment/48864660877603341b07ed0754899a46.png)
 
 **ip tables and tcpd**
-![[Pasted image 20260209125236.png]]
+![](attachment/d3c5cf9d868aadaa9053c66ff3c83164.png)
 
 **Types of firewalls**
 1. IDS: Intrusion detection system -> Software that detects intrusions but does nothing to stop them. except inform the system. 
@@ -656,61 +656,34 @@ So for example we can say, any packet received at port 12345 of the router's pub
 Basically of vs code live share works 
 So basically port forwarding prevents exposing the entire computer, instead only forwards the port that is required. 
 
-Future Jayce take on port forwarding. 
-Basically 
-NAT = no one can enter unless you start the conversation. 
-Port forwarding = You would need to modify the router saying if i get any message on this port, you should forward it to this port on this very ip (computer).
-
-So when a NAT receives a message which is not present in its NAT table entry nor a port forwarding exists for that very port, it would simply drop the packet!
-Easy. 
-
-*NAT problems with games.* 
-So we know now until and unless we start a conversation no one can talk back to us. Think about a 2 player game, where both would need to send packets to each other, and both the users have a NAT in front of them. So now they are stuck as initiating the connection from one user to the other would be rejected as that user hasn't send a message to the other. Called as the **NAT Traversal Problem**
-Solution to this problem could be either to simply use **port forwarding** and modifying the router, to say if any access to this specific port of the NAT's public ip should be forwarded to my computer's port where the game server is running. 
-Another solution is called 
-**Hole punching** (most important idea)
-Both sides:
-2. Contact a **public server**
-3. That server tells each their **public IP + port**
-4. They both try to connect to each other **at the same time**
-```
-you → serverfriend → serverthen:you → friend_public_ipfriend → your_public_ip
-```
-👉 Because both NATs saw **outgoing traffic**, they:
-- create temporary mappings
-- allow the incoming packets through
-✅ Connection succeeds (sometimes)
-Well if it fails we would simply fall back to using a **relay server**, where everything goes through a central server. 
-There is something even called **UPnP** which stands for universal plug and play, which allows applications to directly ask the router to open a port and forward any requests to me. This may be a security viability as imaging a malware doing this. 
-
 ### Confidentiality and Data Integrity
 **Cryptography**
 Like simple shift algorithm 
 like cipher 
-![[Pasted image 20260209131618.png]]
+![](attachment/92d78d45b750ac0a0466b77b0b0fd5f9.png)
 But how do we share the key?
 
 **Symmetric encryption**
 Basically ` K = K^-1` 
 Like if i encrypt the file with a given key K like some sort of password, then i need to share that password with ou so you would be able to decrypt the file. .. Nice!
-![[Pasted image 20260209131957.png]]
+![](attachment/1763e0d13799b48902c9909fac0265c6.png)
 
 **Public key encryption**
 We have a public private key pair. 
 
 So for validation we have the following happening 
-![[Pasted image 20260215183301.png]]
+![](attachment/9604d2ea6fd5a67c3dcb6570d3170940.png)
 So if I encrypt with my private key and send it to lets say X. X can now decrypt with my public key and validate that the message came from me. yay!
 
 And for ensuring confidentiality
-![[Pasted image 20260215183708.png]]
+![](attachment/6ef94866bbfe9a456ad79cd2bc8d7d77.png)
 we can do something even more smart
 We can encrypt the data with the destination's public key and then now the destination is the only one that can decrypt the message with their private key. Lets goo!
 
 We can mix them both to have both validation and confidentiality. 
 
 **Encryption Comparision**
-![[Pasted image 20260215183922.png]]
+![](attachment/6efc98916b7cca37f195af47a8fc8d2e.png)
 
 **Secure Channel Establishment**
 Lets say I dont have a file to share but what if we want to obtain these keys over a sepcific channel. Like if we want our website to be secure, how do i share the key with everyone? 
@@ -746,11 +719,11 @@ Example of how it really works
 The hacker doesn't even know the secret key aka `a` and `b`. They need to make guesses which by the time they actually make it, the connection would most likely be closed!
 
 Example 
-![[Pasted image 20260215190248.png]]
+![](attachment/55339d51b27ca668f99db5ae9e1ee7fa.png)
 
 
 Now Solution B is **Secure Hosts**
-![[Pasted image 20260215190724.png]]
+![](attachment/8341da78cee6ee4632c30736eb7f1c7a.png)
 
 Example of such a Secure host is Kerberos 
 
@@ -762,7 +735,7 @@ Tickets expire after a predefined amount of time. In which case you have to relo
 Yt video link: [MicroNugget: How Kerberos Works in Windows Active Directory | CBT Nuggets](https://www.youtube.com/watch?v=kp5d8Yv3-0c)
 
 Summary of it. 
-![[Pasted image 20260215192427.png]]
+![](attachment/4c4075f2f2e84629056a90e9ee43e43d.png)
 So first of all, all the tickets are stored in the client. 
 And interesting enough we have 2 tickets. I'll explain from where do they come in a bit. The Tray lives in memory so if we ever encounter a crash, the tickets would just disappear. 
 *Authenticator*
@@ -779,7 +752,7 @@ Finally the client would then send a copy of real ticket to the file server, whi
 Back to encryption 
 **Hashing**
 The hashing funcction shouldn't be inversible basically. 
-![[Pasted image 20260215193930.png]]
+![](attachment/39bd166306a28aa4a735102f03cd3f47.png)
 
 # Week 6: IP
 ### Intro
@@ -789,7 +762,7 @@ Data are fragmented into packets and a layer 3 header is added in front of each.
 Then these travel over a series of interconnected networks 
 
 WE have a problem. 
-![[Pasted image 20260215211308.png]]
+![](attachment/8f1968fa4488c37f3a0c24690b7cd3e3.png)
 
 There are different networks with different protocol stacks and somehow they need to talk to each other... !
 The solution is *NOT* to force all the networks run the same protocol stack.  
@@ -823,7 +796,7 @@ IP dattagrams are routed through the internet.. Routers pass datagrams to the un
 	packet handling 
 
 Internet Control Message Protocol (ICMP) used for error reporting / signalling 
-Dynamic Host configuration Protocol (DHCP) which decides on your IP address dynamically. 
+Dyntamic Host configuration Protocol (DHCP) which decides on your IP address dynamically. 
 And finally routing protocols, defines paths and creates forwarding tables. RIP, OSPF, BGP. which helps you send the datagram. 
 
 ### Fragmentation
@@ -832,12 +805,11 @@ In those cases, The IP datagram needs to be fragmented.
 The destination reasssembles fragmeneted datagrams, not the intermediate routers.. mainly to push complexity out of networks. 
 Datagram may have to be fragmented further along the path 
 Fragmentation scheme must ensure that intermediate routers can fragment datagram to whatever level necessary. 
-![[Pasted image 20260215220440.png]]
+![](attachment/8e02ba1a69c25e562a3b41638e3442eb.png)
 To know if more fragments are expected to follow, the more fragments flag is set to 1. 
-*Note:* The fragment offset is in units of 8bytes. So 1 fragment offset means, `1 * 8 = 8th byte` 
 And even *Note:* How many actual number of 8B packets can we send.. it is`8191` BUT it is `8190`. 
 Simple example 
-![[Pasted image 20260215221021.png]]
+![](attachment/03ce0d035333354ab201afdf3c58d45f.png)
 The reason we are getting 61 in the second line is because of incorporating the header length in as well. 
 `(508 - 20) / 8 = 488/8 = 61` 
 
@@ -852,16 +824,16 @@ Each IP address is associated with *interface* like NIC (network interface contr
 Assign addresses with same prefix to interfaces that belong to same organisation. e.g. the network IP address groups all addresses on that network.
 
 We intially had classes that took care of IP addressing. 
-![[Pasted image 20260215222040.png]]
+![](attachment/283c7dcc87b774a4c32a17320487820f.png)
 That was claseful IPv4. Back in the good old days were only universities were talking with each other.
 
 Now we use *class less*
-Network IP addresses managed by non profit Internet Corporation for Assigned Names and Numbers (ICANN) to avoid conflicts.
+Network IP addresses managed by non profit Internt Corporation for Assigned Names and Numbers (ICANN) to avoid conflicts.
 Taken care by subnet masking. 
 
 **Subnet masking**
 
-![[Pasted image 20260215222352.png]]
+![](attachment/889a1905cd80a1258d3c9145b8d6b3d6.png)
 
 **Network addresses prefix length notation: address / prefix-length**
 This notation is called *Classless Inter Domain Routing* (CIDR)
@@ -872,19 +844,19 @@ So in the above example it would be like `123.1.1 is the network address and 0 i
 So if we have `128.138.207.160/27` the `27` would fall in the last item after the dot.  
 
 So for calculating the range of hosts avaliable for a given IP address, all we need to do is 
-![[Pasted image 20260216112708.png]]
+![](attachment/71a5e9b864765bb9d9b900ba145b0b5a.png)
 Simple! 
 
 Net Masks 
 We know network addresses are made up of `address/mask` 
 Prefix of length p corresponds to mask 
-![[Pasted image 20260216112843.png]]
+![](attachment/4406b968a8db14f9ab2f3ffc4ad752ae.png)
 So for example 
 ```
 128.138.207.160/27 = 128.128.207.160/ 11111111 11111111 11111111 11100000
 ```
 So its simply a mask that says how much of the ip can i use to get the network address. 
-![[Pasted image 20260216113128.png]]
+![](attachment/93ac4c0b4a82c54ab2f148cb84f39112.png)
 
 So now this is way better than using classes. 
 We can specify the number of bits that needs to be reserved for the number of hosts we have in that company. 
@@ -892,17 +864,17 @@ Say we want `65k` hosts we would have `128.138.0.0/16`. The number `16` is calcu
 So say we want to calculate the slash number for 200 hosts. We would do 
 `32 - ceil(log(200)) = 24`
 
-![[Pasted image 20260216124601.png]]
+![](attachment/2ee77d45d8ce0e5406365179888a2d11.png)
 Important things to *NOTE* from above image. 
 Getting the Network address is easy. Just make every bit reserved for host `0`.
 BUT now what if we make them all `1`, this address is not usable but it is the *Broadcast address.* The last usable one is broadcast - `1`. 
 
 ### Allocation of address blocks 
 So say we want to send da packet from our ip address to another IP address in some other network. Its the router's job to use the subnet mask to check if it knows where is the network present. 
-![[Pasted image 20260216114848.png]]
+![](attachment/331516c2586c627beb2826a53bb9d2a1.png)
 
 In order to do that they use the longest possible prefix, in order to select the correct network. 
-![[Pasted image 20260216115029.png]]
+![](attachment/3b210da6cd2819b7162b28b7add0b652.png)
 
 The forwarding table is collection of physical ports of the router, not the Layer 4 ones. 
 We will look into some algorithms as well. Stay tuned!
@@ -911,12 +883,12 @@ We will look into some algorithms as well. Stay tuned!
 There is one more problem, how does a host safely decide on its own Ip address? 
 It can't just randomly guess one as doing so would mean it can conflict with someone else's ip address. 
 Solution is the *DHCP*
-![[Pasted image 20260216115645.png]]
+![](attachment/afa890119e9b11589886fdb71255a4f4.png)
 Using this dynamic Up address stuff prevents our client from becoming a server, as the IP address keeps changing. 
 We can even request for a static address from the DHCP which would be more expensive tho.
 
 ### NAT (Network Address Translation)
-![[Pasted image 20260216120805.png]]
+![](attachment/a499a065eb87647d46e695ec74caccc7.png)
 So basically my phone and my computer have different local IP address from the router they have the same global facing IP address. if that makes sense. 
 The router would internally maintain a table, saying which requrest is to whom. So it is perfectly valid for my local computer in my network to have the same IP address as some other client in their own network. 
 Its just the global IPs should be the same. 
@@ -927,251 +899,28 @@ But now if you want to connect to internet, you would connect to the private par
 When you connect to the router, you get a new IP, *not* from your ISP *but* your router uses DHCP service to give you an IP within the private LAN. 
 So now when you want to connect to the internet, the *NAT* would would transoform this DHCP router based assigned local IP to the public IP which is used to connect to the internet. And gets it back and remembers that it is you and sends it back to you on your private IP. 
 This is what happens at home, we connect phone, laptop or desktop to our router using the same public facing ip address but all your devices would have different local ip addressses which are unique within your home network. 
-![[Pasted image 20260216122124.png]]
+![](attachment/09033c6ab685d9d8173069a75830c3a1.png)
 
-![[Pasted image 20260216122454.png]]
+![](attachment/0ba341582294ddc4fda439baa7102a0c.png)
 
-![[Pasted image 20260216122752.png]]
-This is what we were talking top about NAT causing issues with gaming. 
-![[Pasted image 20260216123447.png]]
+![](attachment/9d71850fdd972d4640268910cae4b167.png)
+
+![](attachment/593277f597cfb5f4524604ef3971f62f.png)
 
 
 **ICMP**
-![[Pasted image 20260216123432.png]]
+![](attachment/97c72f2215f10fc3af8116c442104026.png)
 
 ### Ipv6
 it solves the above issues of not having enough Ip addresses.
-![[Pasted image 20260216123658.png]]
+![](attachment/739a7057b20550c4e6f5df2290a05c69.png)
 
-![[Pasted image 20260216123719.png]]
+![](attachment/a54485eed30dad6ed24fc8e2c136ddbe.png)
 
 Fragmentation is gone!
-![[Pasted image 20260216123950.png]]
+![](attachment/efbea3c867995183fd7e3050663aa1bd.png)
 
-![[Pasted image 20260216123959.png]]
-### Routing
-Maintains a table which only stores nodes that are needed at that time. 
-**Shortest Path Routing (SPR)**
-- Dijkstras Algorithm: Labels on arcs represent the cost (delay, hops). 
-- During each step, select newly reachable node with the lowest cost and then add the edge to that node to the tree built so far. 
-**Flood Routing**
-- Forward incoming packet across every outgoing link, except the original source. lol ![[Pasted image 20260503171405.png]]
-The previous protocols are *static* i.e they dont take the current network load into account. 
-We need to consider *dynamic* protocols. 
-**Distance Vector routing aka Bellman Ford**
-- consider costs that direct neighbours are advertising to get packet to destination 
-- select neighbour whose advertised cost, added with own cost to get to that neighbour, is lowest 
-- advertise new cost to other neighbours
-![[Pasted image 20260503184459.png]]
-Formula makes sense. Reminds me of G/A
-![[Pasted image 20260503184526.png]]
-So intially we start with the left column and we slowly make our way to the right. 
-But there is a problem with this approach. 
-*Count to infinity problem*
-![[Pasted image 20260503184942.png]]
-
-**Link State Routing**
-LSR was published aiming to replace DVR. 
-![[Pasted image 20260503185112.png]]
-So its takes more global approach. Where one router knows about everyone there. 
-![[Pasted image 20260503185158.png]]
-
-**DSL vs LSR**
-![[Pasted image 20260503185218.png]]
-### Broadcast and Multicast routing 
-![[Pasted image 20260503185632.png]]
-![[Pasted image 20260503185646.png]]
-Mutlicast is similar in a way it is a broadcast ot a subset of users (group). We could never broadcast to everyone in the internet. Mutlicast is selective flooding. 
-![[Pasted image 20260503185656.png]]
-
-### Hierarchical Routing
-
-The problem, is all the routing algorithms discussed till now cant scale very well. All of them require each router to know about all others. Too demanding with respect to memory and processsing power. 
-The **Solution:** is to go by introducing regions. And separate algorithms for **intra region** and **inter region** routing. 
-
-Today's internet is organised in **Autonomous Systems** (ASs). 
-- independent administrative domains. 
-- Gateway routers interconnect autonomous systems. 
-
-**Interior Gateway Protocols** (**Intra AS**) run within a single AS
-    ![[Pasted image 20260503185932.png]]
-    So we have RIP, OSPF and EIGRP. 
-**Broader Gateway Protocols** (**Inter AS** routing) runs between different ASes.
-- It deals with actual politics. 
-- **BGP** is the internet standard 
-
-Lets looks at OSPF and BGP in a bit more detail 
-**OSPF**
-- Link state routing protocol. 
-- Abstracts collection of networks, routers and links into directed graph; each edge with its cost (distance, delay, etc.) 
-- Serial link between two routers represented by pair of arcs; one in each direction 
-- Multi-access network represented by node for network itself, plus node for each router 
-- Computes shortest path from every router to every other router
-- ![[Pasted image 20260503190434.png]] So we can divide our network into backbone and some areas. Each area should have an area border radius.
-**BGP**
-- Inter AS routing. Solo sigma protocol. 
-- Neighbouring routers maintain connection to simplify reliability. So provides reachability information from neighbouring ASs. BGP uses TCP on layer 4. 
-- BGP is path vector protocol. 
-    Based on distance vector routing, but paths (**not distances**) are announced. So does not suffer from count to infinity problem, As say if router A goes down, then the router can just filter for a path that doesn't contain A. Easy! 
-    Router decides on path.
-    BGP was designed on **3 napkins** during a conference lunch break. lmao!
-    ![[Pasted image 20260503191034.png]]
-    So we use **supernetting** to reduce space in the routing table. 
-	![[Pasted image 20260503191450.png]]
-	![[Pasted image 20260503191458.png]]
-
-### Custom Router Firmware
-**DD-WRT**
-- Based on OpenWrt 
-- Comes with OpenVPN
-**Advanced Tomato**
-- Based on Tomato
-- Adds GUI. 
-
-# Week 7 - Data link layer 
-Data travels in frames here. 
-Recap of Device Terminology 
-- **Repeaters** aka Hubs live at the **physical layer** for boosting signals. They just repeat everything they hear to everyone. 
-- **Switches** and **Bridges** live at the **Data link layer** to make interconnections. Decisions are based on MAC addresses. 
-- Multi protocol Routers (aka **Gateways**) live at the the **Data link layer** for forwarding packets. Decisions are based on IP addresses. **Transport layer gateways** and **application layer gateways** also exist. In order to connect IP based networks to each other, you would need a Router acting as the gateway in between them. 
-## Ethernet
-Ethernet is meant of LAN/MAN/WAN. 
-Currently at 100Gbps using fiber optics. But also twinaxial cable, which also quite fast, but not as fast as fiber optixs. 
-
-Most common cable type is 
-- UTP (Unshielded Twisted Pair )
-Other popular cable types:
-- STP (Shielded/ Screended Twisted pair )
-- FTP (Foiled Twisted Pair)
-- SFTP (Shielded and Foiled Twisted Pair) *not* to be confused by SSH file tranfer. Secure file transfer protocol. 
-
-Ethernet cable comes in 3 flavours 
-- **Straight through** - Used to communicate between devices of different OSI layers. e.g switch to router. 
-- **Crossover** - Used to communicate between devices of the same OSI layer - switch to switcch 
-- **Rollover** - Used to directly tap into a networking device. (to troubleshoot)
-
-*Question:* What cable do we use to connect our computer to the router?
-So we can rephrase that question to ask which layer of the OSI model is our computer present in.
-Well our Computer is *Layer 3*, but why? you might be thinking well it does even talk with applications and stuff, but those layers, aka layer 4 and layer 5, dont require a hardware. So it is layer 3. 
-And we know router is *Layer 3* as well. 
-Now coming back to the question. *REALLY IMPORTANT* If you say we are going to use Crossover, you are WRONG!. Cause even tho they are the same layer we are only connecting to a **switch of the router**.  We are never really connecting to the router. So we would use a **Straight through**
-
-![[Pasted image 20260503194115.png]]
-Straight through: Media Dependent Interface (MDI)
-Crossover: Media Dependent Interface with Crossover (MDIX)
-Some modern devices know how to **fake swap** between a straight and a cross over, using internal, software based remapping (Auto-MDI/MDIX). 
-
-## Frames
-![[Pasted image 20260503194450.png]]
-The trailer would hold the CRC checksum. CRC stands for Cyclic Redundancy Check. 
-Transmission errors are identified by CRC checksum. 
-## MAC address. 
-Each NIC has a MAC address. 
-48 bits, writeedn as six colon seperated bytes in hex. 
-![[Pasted image 20260503195116.png]]
-Remember the I/G bit and the U/L bit. 
-We can change our MAC address easily, so the above point about OUID doesn't really hold. 
-
-## Switch 
-Its a smart repeater, which forwards messages to the right port using the MAC address. It has a **forwarding information base (FIB)** MAC table. 
-![[Pasted image 20260503200424.png]]
-There is a problem with sniffing the packets here. 
-Say we have one device connected to port `1` and another to port `2`. And say the user on port 1 wants to sniff packets on port 2. This isn't possible right now, as the switch would directly send user 2 packets to port 2. Port 1 has no access to it. lol 
-**Switching**
-Store and forward switching vs cut through switching 
-![[Pasted image 20260503201005.png]]
-Bridges ususally support Store and Forward, and switches support both. 
-
-## Wireless Access Point (WAP)
-Goes by the name 802.11
-Its goal is to connect you to other computers, wirelessly. **Sometimes its even used to extend the range of networks.** 
-![[Pasted image 20260503201508.png]]
-![[Pasted image 20260503201530.png]]
-As packets are everywhere. 
-![[Pasted image 20260503201624.png]]
-
-## Topologies
-![[Pasted image 20260503202228.png]]
-Everything is independent, no collisions. 
-Now look at this 
-![[Pasted image 20260503202427.png]]
-Here notics, the computers (hosts) are connected to the wires. lol. 
-
-**Bus topology**
-![[Pasted image 20260503202714.png]]
-In order to add a new host, we cut the wire at that point and then use a BNC coaxial tee connector. 
-
-**Ring Topology**
-If the device died, then the network died. lol. 
-![[Pasted image 20260503203058.png]]
-
-**Token ring**
-Connected all hosts in a logical ring. and solves the device dieing isssue imposed by ring topology. 
-An intermediate device was used to achieve this 
-- Multistation access unit (MSAU)
-![[Pasted image 20260503203255.png]]
-So whoever has the token can transmit data. 
-Predeseccor of switches. 
-There are 2 modes. 
-- Listen 
-- Transmit 
-**Listen mode** 
-![[Pasted image 20260503203736.png]]
-We get a frame, we check if the frame is for us, if it is then we keep a copy else we just forward it. 
-**Transmit mode** 
-![[Pasted image 20260503203720.png]]
-*Note*: here we have the token, so till we have the token we can send frames out to the next. 
-When we are done talking, we can pass the token to the next. 
-Only 1 host can be transmitting and only that would have the token. 
-And if we recieve back the same message we sent, then it is safe for us to release the token as we are sure that the message has gone through the entire network. 
-**Early release mode** means token is released and placed on the ring before the transmitted frame is even heard back. Speeds up the network. 
-![[Pasted image 20260503204436.png]]
-![[Pasted image 20260503204719.png]]
-
-**Star Topology**
-![[Pasted image 20260503205105.png]]
-
-## MAC
-Medium Access Control Sublayer
-![[Pasted image 20260503205944.png]]
-WIFI is `802.11` 
-Medium access stratergies. 
-![[Pasted image 20260503210511.png]]
-Similar to token ring! 
-
-*Static Channel Allocation*
-TDM and FDM can be used to partition channels. 
-- TDM (Time division multiplexing)
-- Station must wait for its turn (i.e slot) to transmit. 
-- Transmission rate limited to R/N where R is maximum channel rate. 
-- Problem is what if one host doesn't want to say anything, then we are wasting time. 
-
-- FDM (Frequency Division Multiplexing)
-- So now we separate based on frequencies. We say you talk int this frequency and you talk in this frequency to me. So now we can listen to all of them and be able to differentitiate. 
-- Problem is station must use only limited frequency band and Bandwidth is not fully utilised either: B/N where B is total channel bandwidth -> Bad for large N with bursty traffic. 
-
-So **Solution** is to use *dynamic channel allocation*
-**ALOHA** protocol 
-- When station has frame to be transmitted, just send it. 
-- When collision occurs, stations waits random amount of time and retries. 
-- Station may broadcast whenever neccessary (contention based). Any station has the same probability of transmission. Channel contention means multiple channels are trying to use the same communication channel at the same time. 
-- Problem with ALOHA is it suffers from low channel efficiency, especially if there is much channel contention. ![[Pasted image 20260503232414.png]] 18% max efficiency. 
-- Improving basic ALOHA: **Slotted transmission:** Only specific times when stations may transmit -> reduces vulnerable period. 
-- Slotted ALOHA. 
-- Be polite, listen for other transmission before sending:
-    **Carrier sensing**: transmission is only allowed when channel is idle. 
-     Carrer Sense multiple access (CSMA)
-     - CSMA/CD (Collision detection) -> Ethernet 
-     - CSMA/CA (Collision avoidance) -> WiFi. 
- - Generate agreement about what station can transmit next. Token passing: station may only trasmit when holding token. Token ring. 
-
-- Collision detection. Transmission stops as sson as socllision occurs -> collison detection (CD). Add **jamming signal** to create agreement about collision. 
-- Combined MAC prootocol called **CSMA/CD**
-    Host must transmit for long enough to know that frame is OK. So we would transmit for `1RTT` with *padding* So we keep sending `0s` along with the input. Why `1` RTT, you might ask, well its because `1/2` RTT = latency to send the packet, another half for the collision signal to come back to the sender. Imagine if the collision happened close to the other network. 
-    Minimum frame length is 2r where r is simply the latency. 
-    So one small ACK would be around 64 bytes lol. 
-
-
+![](attachment/3c32fa61852e298835e7bb92de1aef3c.png)
 
 
 # Wireshark 
