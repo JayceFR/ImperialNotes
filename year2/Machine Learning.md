@@ -896,6 +896,96 @@ How to select the right value of K??
 **ELBOW Method**
 ![[Pasted image 20260302133820.png]]
 The loss decreases as we have more K centroids as they each become their own cluster. 
+
+## Probability Density Function (PDF)
+![[Pasted image 20260507173709.png]]
+p(x) >= `0` *Note:* There is no upper bound 
+but the integral should be =`1` 
+**Density Estimate** is to try to find p(x) from the data we have. So they give us a set of green points and we need to find the blue one. 
+
+### Density Estimation: Applications
+- Used to find anomaly.
+	![[Pasted image 20260507174912.png]]
+	Concept is used in commercial flights as well, to monitor the jet engines. So if something is off and identified as an anomaly it would be taken to the garage to run some more tests and try fixing the problem. 
+- Used in gerative models. 
+	![[Pasted image 20260507175151.png]]
+	So the way, Dalle and Nano banana works, is that they have all these images in their sample space and the condition on the prompt. So match on all the images that the prompt matches with. 
+	*Note* It isn't just a normal discriminative model, like the one we saw intially, neural networks, linear regression or decision tress. It doesn't split the images, but conditions on it with probability. 
+--- 
+Probability Density estimation is done with two classes of approximation 
+- Non Parametric 
+- Parametric. 
+### Non Parametric Approach. 
+- Don't make any assumption about the form 
+- Follow the data 
+- High variance & Low bias. 
+Histograms is used for density estimation. 
+![[Pasted image 20260507180356.png]]
+![[Pasted image 20260507180735.png]]
+
+### Parametric approaches 
+- Makes simplifed assumptions about the form 
+- High bias & Low variance. 
+- Number of parameters is fixed and doesn't grow with the data. 
+
+# Evolutionary Algorithm 
+Optimisation algorithm for black box functions, no access to the gradient. 
+![[Pasted image 20260507194713.png]]
+ 
+![[Pasted image 20260507195640.png]]
+So we mutate the best ranked ones and cross them and then repeat. 
+## Genetic operators 
+Algorithms are often defined according to 3 main operators:
+- Selection operator: Selects the olutions that will be reproduced
+- Cross over operator: Mixes the parent's genotype
+- Mutation operator: Type and frequency of the variations applied to the genotype after reproduction. 
+![[Pasted image 20260507195944.png]]
+
+## Mastermind Game
+![[Pasted image 20260507200420.png]]
+We usually maximise in EA as we want to find the fittest individual. 
+
+*Genotype* is how we represent the solution 
+*Phenotype*is how the genotype can be devloped into a solution. 
+So for example in the mastermind course. 
+- Genotype would be Given N, the number of hidden pieces, the genotype would be the binary string with N `*` 3 bits. 
+- Phenotype: We would simply aggregate the bits 3 by 3 each trio of bits is turned into an integer. Then each integer correspons to a different colour. 
+![[Pasted image 20260507201054.png]]
+
+### Selection operators
+Goal is to select the parents for the next generation. 
+Two ways of doing selection operatation.
+- Bised roulette wheel -> Each individual gets a portion in the wheel and they occupy the memory as they have. 
+- Tournament  -> Randomly choose 2. Then choose the best one. Repeat till we satisfy the number of samples for our next generation. 
+![[Pasted image 20260507201656.png]]
+So with elitism, we can guarantee monotonic increase, as it is guaranteed that the best individual would remain in the generation. 
+
+### Cross over operator. 
+Now with elitism and selection operator we have parents. Now the parents go on to make offspings. 
+![[Pasted image 20260507202232.png]]
+
+### Mutation operator 
+So we randomly flip the bit in the bitstrings. 
+![[Pasted image 20260507202313.png]]
+
+### Stopping Criterion
+![[Pasted image 20260507202434.png]]
+
+![[Pasted image 20260507202540.png]]
+![[Pasted image 20260507202556.png]]
+
+## Evolutionary Stratergies
+![[Pasted image 20260507202909.png]]
+### mew + lamda evolutionary stratergy 
+![[Pasted image 20260507203341.png]]
+
+## Novelty search
+![[Pasted image 20260507204936.png]]
+
+## Quality Diversity optimisation 
+![[Pasted image 20260507210359.png]]
+
+
 # Good Questions To Practice 
 Taken from TUT Sheet 1. The Big Picture, KNN, Decision Trees 
 ![[Pasted image 20260118215837.png]]

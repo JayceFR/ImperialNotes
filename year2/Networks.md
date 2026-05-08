@@ -938,7 +938,7 @@ This is what we were talking top about NAT causing issues with gaming.
 
 **ICMP**
 ![[Pasted image 20260216123432.png]]
-
+So ping uses ICMP. 
 ### Ipv6
 it solves the above issues of not having enough Ip addresses.
 ![[Pasted image 20260216123658.png]]
@@ -1028,7 +1028,7 @@ Lets looks at OSPF and BGP in a bit more detail
 - Based on Tomato
 - Adds GUI. 
 
-# Week 7 - Data link layer 
+# Week 8 - Data link layer 
 Data travels in frames here. 
 Recap of Device Terminology 
 - **Repeaters** aka Hubs live at the **physical layer** for boosting signals. They just repeat everything they hear to everyone. 
@@ -1165,15 +1165,140 @@ So **Solution** is to use *dynamic channel allocation*
      - CSMA/CA (Collision avoidance) -> WiFi. 
  - Generate agreement about what station can transmit next. Token passing: station may only trasmit when holding token. Token ring. 
 
+**CSMA**
 - Collision detection. Transmission stops as sson as socllision occurs -> collison detection (CD). Add **jamming signal** to create agreement about collision. 
 - Combined MAC prootocol called **CSMA/CD**
     Host must transmit for long enough to know that frame is OK. So we would transmit for `1RTT` with *padding* So we keep sending `0s` along with the input. Why `1` RTT, you might ask, well its because `1/2` RTT = latency to send the packet, another half for the collision signal to come back to the sender. Imagine if the collision happened close to the other network. 
     Minimum frame length is 2r where r is simply the latency. 
     So one small ACK would be around 64 bytes lol. 
+Ok so now we have detected collison, what would we do now?
+![[Pasted image 20260504004756.png]]
+We have 1 persistent used by ethernet, non persistent which is a middle ground and p persistent which is used by WIFI which rolls a dice in order to send a packet. 
+The reason an ethernet can do 1 persistent easily is because its a wire that is connected usually to a port in the switch. And a switch handles congestion for us by nature as it makes decisions based on MAC addresses. 
 
+## ARP 
+![[Pasted image 20260504011335.png]]
+The MAC and IP address mapping is stored in the DHCP. ARP protocol helps us to get our MAC address. 
+![[Pasted image 20260504012910.png]]
+So we first send a broadcast, then the host `1` would say oh thats me, here is my MAC, send it back to whoever is asking. 
+## VLAN
+New this year!
+Proper way of setting switches. 
+Switches seperate collision detections, but can not separate broadcast domains. 
+Like the broadcase FF:FF:FF:FF:FF:FF is still sent to all hosts on the switch (ARP, DHCP). 
+So we would want our switch to limit the broadcast within an IP subnet. There is a problem in the question itself! lol. Switch is a layer 2 device, it has no notion of IP addresses and IP itself. 
+VLAN tries solving that issue by dividing one physical switch into multiple logical networks, so each VLAN becomes its own broadcast domain. Broadccasts now stay inside the VLAN instead of reaching the entire switch. 
+Another benefit of using VLANs are 
+**VLAN Trunking**
+Previously we would require one router interface port for one subnet. So say we have 2 subnets, we would require two ports on the router. 
+Now the same Router interface (port) can serve multiple VLAN-tagged subnets. 
+A trunk link carries traffic for multiple VLANs over one physical connection. 
+Frames are tagged with a VLAN ID, inserted in the Ethernet header between "Source MAC" and "Ethernet Type". 
+# Week 9: Physical Layer
+## Wired Transmission 
+- UTP
+- Coaxial 
+- Fibre Optics
+### UTP
+Low cost medium is produced by twisting pair of wires together. Unshielded Twisted Pair. 
+Twisting wires reduces interference and cross talks. 
+Used in telephone systems -> mass production -> cheap
 
+### Patch Panels
+![[Pasted image 20260504110339.png]]
+### Coaxial Cable 
+Coaxial cable reduces the problems associated with twisted pair by placing the two conductors concentrically. 
+So dont need to twist the wires. 
+![[Pasted image 20260504111010.png]]
+There are shielding benefits
+- electromagnetic field mainly between inner and outer conductor. 
+Supports a wider range of frequencies, more bandwidth. 
+Highest cost per meter. 
+- So UTP wins for every day users 
+### Optical fiber
+It does not suffer from nor generate **electromagnetic innterference (EMI)**
+Exploits refraction property of light. 
+- When light ray passes from one medium to another, it is refacted at hthe boundary. 
+- Single optical fiber is 2 - 125 micrometers. 
+Remeber the physics exam  question on this! 
+**Attenuation** (how much signal is lost) is low for optical fibres, it can be used  for long distances. 
+Very high bandwidth. 
 
+Comparison with everything 
+![[Pasted image 20260504111723.png]]
+## Wireless Transmission 
+![[Pasted image 20260504111939.png]]
+- Radio
+- Wifi
+### Radio 
+![[Pasted image 20260504112126.png]]
 
+### WIFI
+![[Pasted image 20260504112510.png]]
+
+**Information Representation**
+![[Pasted image 20260504120924.png]]
+Symbol rate per second aka **Baud Rate** (Bd)
+How many times per time unit the symbol/waveform changes. 
+*Note* It is interlinked with bitrate, which says how many times per time unit can the symbol/waveform change? it depends on the medium. 
+so for example 
+Say:
+- Baud rate = **1000 symbols/sec**
+Case 1:
+- 1 bit per symbol → **1000 bps**
+Case 2:
+- 2 bits per symbol → **2000 bps**
+Case 3:
+- 4 bits per symbol → **4000 bps**
+Same symbol rate, different bitrates.
+
+![[Pasted image 20260504121738.png]]
+So digital channel can be implemented by an analogue channel using a **modem** (modular-demodulator)
+Analogue channel can be implemented by a digital channel using a **codec** (coder-decoder). 
+![[Pasted image 20260504122014.png]]
+
+## Modulation
+*Problem* How can we encode a digital information signal to be transmitted effectively using the bandwith supported by a channel. 
+*Solution* Use a modulation scheme. 
+Basically transforms information signal into form more suitable for transimission. 
+Baseband modulation and Broadband modulation
+![[Pasted image 20260504122640.png]]
+So baseband is unmodified. 
+but broadband is modified, so reusing like the phone telecom wires, we had the infra built, so we can reuse it. 
+- **Amplitude Modulation** (AM) also known as Amplitude Shift Keying. 
+	![[Pasted image 20260504123055.png]]
+	So if the data is `0` we have a less amplitude signal. Easy 
+- **Frequency Modulation** (FM) also known as Frquency shift keying 
+	![[Pasted image 20260504123336.png]]
+	So if we have more than one wave, then `1` else `0`. Too easy!
+- Phase modulation (PM)
+	![[Pasted image 20260504123544.png]]
+	Reminds me of what we did with flip flops. 
+- Advanced Modulation Techniques 
+    ![[Pasted image 20260504123842.png]]
+    So instead of sending bits we are sending symbols (collection of bits) lol. So Baude rate is important. 
+    We first agree on a map of symbols (those blue dots). 
+	The phase goes from `0` to `360` degrees, therefore, the Red circle. The amplitude can then point to which symbol, the black line. 
+
+## DSL
+Digital subscriber line. 
+![[Pasted image 20260504124739.png]]
+So now we have from `0 - 3000` for voice and everything on top of that being data. 
+## ADSL (Asymmetric DSL)
+Divide bandwidth into 256 channels of 4000 hz each. 
+Channels 1 - 5 is not used to avoid interference. 
+Internet users mostly download, so reserve more channels for that. 
+![[Pasted image 20260504125443.png]]
+
+## DSLAM
+DSL Access Multiplexer recovers bit signal. 
+![[Pasted image 20260504132011.png]]
+So from our computer to ADSL Modem to telephone line to DSLAM to ISP. 
+If we are getting only 200Mbps, we are still using the telephone line with DSL. 
+If we are getting more than that, then we are using fibre optics. 
+![[Pasted image 20260504132217.png]]
+Fibre to the premises we would get more than that. 
+So get closer to those boxes. 
 # Wireshark 
 Wireshark is an open source network protocol analyser. Captures network traffic and stores data for offline analysis. 
 
