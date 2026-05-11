@@ -319,7 +319,34 @@ This would also remove strong coupling.
 **System Test** We are not going to do any mock objects. 
 
 # Distribution and Remoting 
+ ![[Pasted image 20260511212300.png]]
+### HTTP and REST
+HTTP has a method. When we get something back, we would get the value or an error with status codes. 
+So using the web to power our communication from service to service is typically known as the **REST architecture. Representational State Transfer**
+![[Pasted image 20260511212634.png]]
+*Note:* It is an URI and not a URL. Meaning the URI doesn't need to exist if you type it into the web browser 
+URI identifies these resources. 
+The resources are represented as either XML or JSON 
+![[Pasted image 20260511212814.png]]
+We could even provide both XML and JSON to our client. 
+We could even use binary representation (Google). 
+### RMM 
+![[Pasted image 20260511213010.png]]
 
+**RMM Level `0`**
+![[Pasted image 20260511213204.png]]
+
+**RMM Level 1**
+![[Pasted image 20260511213246.png]]
+![[Pasted image 20260511213257.png]]
+
+**RMM Level `2`**
+![[Pasted image 20260511213426.png]]
+![[Pasted image 20260511213443.png]]
+
+**RMM Level 3**
+![[Pasted image 20260511213601.png]]
+![[Pasted image 20260511213633.png]]
 
 # CD and Agile Methods
 ### Agile Methods
