@@ -795,6 +795,36 @@ Just expand and keep checking
 Remember for odd length you would expand(i,i)
 For even length you would expand (i, i+1) 
 
+```python
+class Solution:
+    def longestPalindrome(self, s: str) -> str:
+        def expand(i, j):
+            left = i
+            right = j     
+
+            while left >= 0 and right < len(s) and s[left] == s[right]:
+                left -= 1
+                right += 1
+
+            return right - left - 1
+
+        ans = [0, 0]
+
+        for i in range(len(s)):
+            odd_length = expand(i, i)
+            if odd_length > ans[1] - ans[0] + 1:
+                dist = odd_length // 2
+                ans = [i - dist, i + dist]
+
+            even_length = expand(i, i + 1)
+            if even_length > ans[1] - ans[0] + 1:
+                dist = (even_length // 2) - 1
+                ans = [i - dist, i + 1 + dist]
+
+        i, j = ans
+        return s[i : j + 1]    
+```
+
 # Minimum Limit of Balls in a Bag
 
 Medium
@@ -916,4 +946,723 @@ class Solution:
             else:
                 res += diffs[i][1]
         return res
+```
+
+# Majority Element
+
+EasyTopicsCompany Tags
+
+Given an array `nums` of size `n`, return the **majority element**.
+
+The majority element is the element that appears more than `⌊n / 2⌋` times in the array. You may assume that the majority element always exists in the array.
+
+**Example 1:**
+
+```java
+Input: nums = [5,5,1,1,1,5,5]
+
+Output: 5
+```
+
+**Example 2:**
+
+```java
+Input: nums = [2,2,2]
+
+Output: 2
+```
+
+**Constraints:**
+
+- `1 <= nums.length <= 50,000`
+- `-1,000,000,000 <= nums[i] <= 1,000,000,000`
+
+**Follow-up:** Could you solve the problem in linear time and in `O(1)` space?
+
+**Solution**:
+We keep only a counter and res, **Note** This only works because of the problem statement, where they told that there is always a majority element present in the array. 
+
+# Best Time to Buy and Sell Stock II
+
+MediumTopicsCompany Tags
+
+You are given an integer array `prices` where `prices[i]` is the price of a given stock on the `ith` day.
+
+On each day, you may decide to buy and/or sell the stock. However, you can buy it then immediately sell it on the **same day**. Also, you are allowed to perform any number of transactions but can hold **at most one** share of the stock at any time.
+
+Find and return the **maximum** profit you can achieve.
+
+**Example 1:**
+
+```java
+Input: prices = [7,1,5,3,6,4]
+
+Output: 7
+```
+
+Explanation: Buy on day 2 (price = 1) and sell on day 3 (price = 5), profit = 5-1 = 4. Then buy on day 4 (price = 3) and sell on day 5 (price = 6), profit = 6-3 = 3. Total profit is 4 + 3 = 7.
+
+**Example 2:**
+
+```java
+Input: prices = [1,2,3,4,5]
+
+Output: 4
+```
+
+Explanation: Buy on day 1 (price = 1) and sell on day 5 (price = 5), profit = 5-1 = 4. Total profit is 4.
+
+**Constraints:**
+
+- `1 <= prices.length <= 30,000`
+- `0 <= prices[i] <= 10,000`
+*Solution*
+Its a greedy problem, we can bascially bug and sell for every peak. So buy when low and immediately sell when its high. Stupid problem. 
+```python
+class Solution:
+    def maxProfit(self, prices: List[int]) -> int:
+        profit = 0 
+        for i in range(1, len(prices)):
+            if prices[i] > prices[i-1]:
+                profit += (prices[i] - prices[i-1])
+        return profit 
+```
+So less lines of code for a seemingly hard problem. 
+
+
+# **Concept of removing duplicates**
+There is 2 ways of removing duplicates in general. 
+1. One way is to sort and make sure the previous entry is not the same as the current entry. 
+2. The other more interesting way which i encountered for this problem called *Count hashmap*
+### Permutations II
+
+MediumTopicsCompany Tags
+
+You are given an array `nums`, that might contain duplicates , return all possible unique permutations in **any order**.
+
+**Example 1:**
+
+```java
+Input: nums = [1,1,2]
+
+Output: [
+    [1,1,2],
+    [1,2,1],
+    [2,1,1]
+]
+```
+
+**Example 2:**
+
+```java
+Input: nums= [2,2]
+
+Output: [[2,2]]
+```
+
+The way i solved it was using `1`
+```python
+class Solution:
+    def permuteUnique(self, nums: List[int]) -> List[List[int]]:
+        
+        nums.sort()
+        res = []
+        def backtrack(numbers : List[int], perm: List[int]):
+            if len(numbers) == 0:
+                res.append(perm.copy())
+                return 
+            
+            curr = None
+            for i in range(len(numbers)):
+                if curr is not None and curr == numbers[i]:
+                    # skip, to avoid duplicates
+                    continue
+                curr = numbers[i]
+                perm.append(curr)
+                copy = numbers.copy()
+                copy.remove(curr)
+                backtrack(copy, perm)
+                perm.pop()
+        backtrack(nums, [])
+        return res 
+```
+But as you can see the copy in the middle is quite annoying. 
+Instead using Neetcode's second approach of storing things in a *Count Hashmap*
+![[Pasted image 20260911140030.png]]
+Now the code is much more simpler 
+![[Pasted image 20260911140102.png]]
+Ok cool. 
+
+# Matchsticks to Square
+
+MediumTopicsCompany Tags
+
+You are given an integer array `matchsticks` where `matchsticks[i]` is the length of the `ith` matchstick. You need to use all the matchsticks to make one square. You should **not break** any stick, but you can link them up, and each matchstick must be used exactly one time.
+
+Return `true` if you can make this square and `false` otherwise.
+
+**Example 1:**
+
+```java
+Input: matchsticks = [1,3,4,2,2,4]
+
+Output: true
+```
+
+  
+
+**Example 2:**
+
+```java
+Input: matchsticks = [1,5,6,3]
+
+Output: false
+```
+```python
+class Solution:
+    def makesquare(self, matchsticks: List[int]) -> bool:
+        square = [0, 0, 0, 0] # T R B L 
+
+        permiter = sum(matchsticks)
+        if (permiter // 4) * 4 != permiter:
+            return False 
+
+        size = permiter // 4 
+
+        matchsticks.sort(reverse=True)
+
+        print("size", size)
+        def isValidSq(square):
+            for s in square:
+                if s != size:
+                    return False  
+            return True 
+
+        def backtrack(pos: int, square: List[int]) -> bool:
+            if pos == len(matchsticks):
+                return isValidSq(square)
+            m = matchsticks[pos]
+            for p in range(len(square)):
+                if square[p] + m <= size:
+                    # add it to that side
+                    square[p] += m 
+                    if backtrack(pos + 1, square):
+                        return True 
+                    square[p] -= m 
+            
+            return False 
+
+        return backtrack(0, square)
+```
+
+# Partition to K Equal Sum Subsets
+
+MediumTopicsCompany Tags
+
+You are given an integer array `nums` and an integer `k`, return `true` if it is possible to divide this array into `k` **non-empty** subsets whose sums are all equal.
+
+**Example 1:**
+
+```java
+Input: nums = [2,4,1,3,5], k = 3
+
+Output: true
+```
+
+Explanation: Given array can be divided into three subsets [5], [2,3], [4,1].
+
+**Example 2:**
+
+```java
+Input: nums = [1,2,3,4], k = 3
+
+Output: false
+```
+
+**Solution**
+Solution seems easy at the start. Simple backtracking problem, with keeping a list of k lists, and then choosing one at a time and backtracking if we dont reach a solution. 
+```python
+class Solution:
+    def canPartitionKSubsets(self, nums: List[int], k: int) -> bool:
+        partitions = [[] for _ in range(k)]
+
+        def validPartition(partitions: List[List[int]]) -> bool:
+            for x in range(1, len(partitions)):
+                if sum(partitions[x-1]) != sum(partitions[x]):
+                    return False 
+            return True 
+
+        def backtrack(pos, partitions: List[List[int]]) -> bool:
+            if pos == len(nums):
+                return validPartition(partitions)
+            curr = nums[pos]
+            for x in range(k):
+                partitions[x].append(curr)
+                if backtrack(pos+1, partitions):
+                    return True 
+                partitions[x].pop()
+            return False 
+
+        return backtrack(0, partitions)
+```
+The problem with this approach is its time complexity its basically going to be a tree, with the height being `n` and each node we do `k` decisions, giving a time complexity of `k^n`. 
+![[Pasted image 20260912131629.png]]
+And in the constraints sections they give `n,k <= 16`. So 16^16 is huge. 
+Instead neetcode suggests another smarter algorithm where at each node we are bounded by only 2 decisions at max. Hence reducing the time complexity to `k*2^n`. Which is significantly smaller than the predecessor. 
+Basically the solution is we first calculate the target, so the sum of the elements in nums / k. And then we go through each element and just make the decision of including in the subset or not, to make one perfect subset. And then after finding one, we continue in the same tree but with the items that are not yet considered to make another tree of height n. we do this at most k times, hence the time complexity `k * 2^n`
+```python
+class Solution:
+    def canPartitionKSubsets(self, nums: List[int], k: int) -> bool:
+        if sum(nums) % k:
+            return False 
+        
+        nums.sort(reverse=True)
+        target = sum(nums) // k 
+        used = [False] * len(nums)
+
+        def backtrack(i, k, subsetSum):
+            if k == 0:
+                return True 
+            if subsetSum == target:
+                return backtrack(0, k-1, 0)
+            
+            for j in range(i, len(nums)):
+                if used[j] or subsetSum + nums[j] > target:
+                    continue
+                used[j] = True 
+                if backtrack(j, k, subsetSum + nums[j]):
+                    return True 
+                used[j] = False
+            return False
+        
+        return backtrack(0, k, 0)
+
+```
+
+# Rotate Array
+
+MediumTopicsCompany Tags
+
+You are given an integer array `nums`, rotate the array to the right by `k` steps, where `k` is non-negative.
+
+**Example 1:**
+
+```java
+Input: nums = [1,2,3,4,5,6,7,8], k = 4
+
+Output: [5,6,7,8,1,2,3,4]
+```
+
+Explanation:  
+rotate 1 steps to the right: [8,1,2,3,4,5,6,7]  
+rotate 2 steps to the right: [7,8,1,2,3,4,5,6]  
+rotate 3 steps to the right: [6,7,8,1,2,3,4,5]  
+rotate 4 steps to the right: [5,6,7,8,1,2,3,4]
+
+**Example 2:**
+
+```java
+Input: nums = [1000,2,4,-3], k = 2
+
+Output: [4,-3,1000,2]
+```
+
+Explanation:  
+rotate 1 steps to the right: [-3,1000,2,4]  
+rotate 2 steps to the right: [4,-3,1000,2]
+
+**Constraints:**
+
+- `1 <= nums.length <= 100,000`
+- `-(2^31) <= nums[i] <= ((2^31)-1)`
+- `0 <= k <= 100,000`
+
+**Follow up:** Could you do it in-place with O(1) extra space?
+
+**Solution**
+Well we would need to first reverse the entire array, and then reverse the first k elements of the array and then reverse the rest. Stupid by heart the solution type problem. 
+![[Pasted image 20260915201850.png]]
+Annoying problem. 
+```python
+class Solution:
+    def rotate(self, nums: List[int], k: int) -> None:
+        """
+        Do not return anything, modify nums in-place instead.
+        """
+        
+        k = k % len(nums)
+
+        def reverse(start: int, end: int):
+            fp = start 
+            lp = end 
+            while fp < lp:
+                tmp = nums[fp]
+                nums[fp] = nums[lp]
+                nums[lp] = tmp 
+                fp += 1 
+                lp -= 1 
+        
+        reverse(0, len(nums)-1)
+        reverse(0, k-1)
+        reverse(k, len(nums)-1)
+```
+
+## Odd Ocurrences in Array 
+A non-empty array A consisting of N integers is given. The array contains an odd number of elements, and each element of the array can be paired with another element that has the same value, except for one element that is left unpaired. For example, in array A such that: A[0] = 9 A[1] = 3 A[2] = 9 A[3] = 3 A[4] = 9 A[5] = 7 A[6] = 9 content_copy the elements at indexes 0 and 2 have value 9, the elements at indexes 1 and 3 have value 3, the elements at indexes 4 and 6 have value 9, the element at index 5 has value 7 and is unpaired. Write a function: def solution(A) content_copy that, given an array A consisting of N integers fulfilling the above conditions, returns the value of the unpaired element. For example, given array A such that: A[0] = 9 A[1] = 3 A[2] = 9 A[3] = 3 A[4] = 9 A[5] = 7 A[6] = 9 content_copy the function should return 7, as explained in the example above. Write an efficient algorithm for the following assumptions: N is an odd integer within the range [1..1,000,000]; each element of array A is an integer within the range [1..1,000,000,000]; all but one of the values in A occur an even number of times.
+
+**Solution**
+Thanks to bending spoons we know the fact that, 
+x XOR x  = `0`
+using that fact we can just xor all the elements together to find the result. 
+*Important:* You should know this mathematical releationship of XOR. It comes in clutch for interviews. 
+
+
+[41. First Missing Positive](https://leetcode.com/problems/first-missing-positive/)
+
+Solved
+
+Hard
+
+Topics
+
+![premium lock icon](https://leetcode.com/_next/static/images/lock-a6627e2c7fa0ce8bc117c109fb4e567d.svg)Companies
+
+Hint
+
+Given an unsorted integer array `nums`. Return the _smallest positive integer_ that is _not present_ in `nums`.
+
+You must implement an algorithm that runs in `O(n)` time and uses `O(1)` auxiliary space.
+
+**Example 1:**
+
+**Input:** nums = [1,2,0]
+**Output:** 3
+**Explanation:** The numbers in the range [1,2] are all in the array.
+
+**Example 2:**
+
+**Input:** nums = [3,4,-1,1]
+**Output:** 2
+**Explanation:** 1 is in the array but 2 is missing.
+
+**Example 3:**
+
+**Input:** nums = [7,8,9,11,12]
+**Output:** 1
+**Explanation:** The smallest positive integer 1 is missing.
+
+**Solution**
+Its soo bad, we need to use the actual array as a set by using negative numebers and stuff. Its pretty shit. Here is the youtube link if you want to understand. 
+[First Missing Positive - Leetcode 41 - Python - YouTube](https://www.youtube.com/watch?v=8g78yfzMlao)
+# Ways to make a fair array
+You are given an integer array `nums`. You can choose **exactly one** index (**0-indexed**) and remove the element. Notice that the index of the elements may change after the removal.
+
+For example, if `nums = [6,1,7,4,1]`:
+
+- Choosing to remove index `1` results in `nums = [6,7,4,1]`.
+- Choosing to remove index `2` results in `nums = [6,1,4,1]`.
+- Choosing to remove index `4` results in `nums = [6,1,7,4]`.
+
+An array is **fair** if the sum of the odd-indexed values equals the sum of the even-indexed values.
+
+Return the _**number** of indices that you could choose such that after the removal,_ `nums` _is **fair**._
+
+**Example 1:**
+
+**Input:** nums = [2,1,6,4]
+**Output:** 1
+**Explanation:**
+Remove index 0: [1,6,4] -> Even sum: 1 + 4 = 5. Odd sum: 6. Not fair.
+Remove index 1: [2,6,4] -> Even sum: 2 + 4 = 6. Odd sum: 6. Fair.
+Remove index 2: [2,1,4] -> Even sum: 2 + 4 = 6. Odd sum: 1. Not fair.
+Remove index 3: [2,1,6] -> Even sum: 2 + 6 = 8. Odd sum: 1. Not fair.
+There is 1 index that you can remove to make nums fair.
+
+**Example 2:**
+
+**Input:** nums = [1,1,1]
+**Output:** 3
+**Explanation:** You can remove any index and the remaining array is fair.
+
+**Example 3:**
+
+**Input:** nums = [1,2,3]
+**Output:** 0
+**Explanation:** You cannot make a fair array after removing any index.
+
+**Solution**
+Need to hold prefix sum for even and odd. Need to note that because removing an element, all the items after that would change their parity from odd to even or even to odd. 
+```python
+class Solution:
+    def waysToMakeFair(self, nums: list[int]) -> int:
+        pre_even_sums = [0 for x in range(len(nums) + 1)]
+        pre_odd_sums  = [0 for x in range(len(nums) + 1)]
+
+        pre_even_sums[0] = 0 
+        pre_odd_sums[0] = 0 
+
+        for i, num in enumerate(nums):
+            if i % 2 == 0:
+                pre_even_sums[i+1] = pre_even_sums[i] + num 
+                pre_odd_sums[i+1] = pre_odd_sums[i]
+            else:
+                pre_odd_sums[i+1] = pre_odd_sums[i] + num 
+                pre_even_sums[i+1] = pre_even_sums[i]
+        res = 0 
+        total_even = pre_even_sums[-1]
+        total_odd = pre_odd_sums[-1]
+
+        for x in range(len(nums)):
+            prev_even = pre_even_sums[x]
+            prev_odd = pre_odd_sums[x]
+
+            next_even = total_even - pre_even_sums[x + 1]
+            next_odd = total_odd - pre_odd_sums[x + 1]
+
+            # Everything after x changes parity
+            new_even = prev_even + next_odd
+            new_odd = prev_odd + next_even
+
+            if new_even == new_odd:
+                res += 1
+        return res 
+
+```
+
+# Maximum Sum Circular Subarray
+
+MediumTopicsCompany Tags
+
+You are given a circular integer array `nums` of length `n`, return the maximum possible sum of a non-empty **subarray** of `nums`.
+
+A circular array means the end of the array connects to the beginning of the array. Formally, the next element of `nums[i]` is `nums[(i + 1) % n]` and the previous element of `nums[i]` is `nums[(i - 1 + n) % n]`.
+
+A **subarray** may only include each element of the fixed buffer `nums` at most once. Formally, for a subarray `nums[i], nums[i + 1], ..., nums[j]`, there does not exist `i <= k1, k2 <= j` with `k1 % n == k2 % n`.
+
+**Example 1:**
+
+```java
+Input: nums = [-2,4,-5,4,-5,9,4]
+
+Output: 15
+```
+
+Explanation: Subarray [-2,4,9,4] has maximum sum 15.
+
+**Example 2:**
+
+```java
+Input: nums = [2,3,-4]
+
+Output: 5
+```
+**Solution:**
+Initially thought of modifiying Kadane by looking if we used the last element, but that breaks. Look down at the solution. 
+Ohh yh Kadane is for finding Maximum Subarray problem. Basically if the currSum is negative then we just start fresh, cause there is a better maximum. 
+```python
+class Solution:
+    def maxSubarraySumCircular(self, nums: List[int]) -> int:
+        # maxSum = nums[0]
+        # currSum = 0
+        # cs, ce = 0, 0 
+        # ms, me = 0, 0 
+        # for i, val in enumerate(nums):
+        #     currSum += val
+        #     if currSum > maxSum:
+        #         maxSum = currSum
+        #         ms, me = cs, i 
+        #     if currSum < 0:
+        #         currSum = 0 
+        #         # reset the current pointers
+        #         cs = i + 1 
+        #         ce = i + 1
+        #     else:
+        #         # update the end pointer 
+        #         ce = i 
+
+        # print(ms, me, maxSum)
+        # if me == len(nums) - 1:
+        #     # We have included the last item, must try to grow the sub array upto ms 
+        #     tmpSum = maxSum
+        #     for i in range(0, ms):
+        #         tmpSum += nums[i]
+        #         maxSum = max(maxSum, tmpSum)
+
+        # Initially thought of using Kadane, and then if the subarray includes the last element, extend it. 
+        # But that breaks for the input [5, -3, 5] were the max is 10, while ours would reutrn 7 
+        # intended solution is soo smart!
+
+        globMax, globMin = nums[0], nums[0]
+
+        currMax, currMin = 0, 0
+        total = 0 
+
+        for num in nums:
+            currMax = max(currMax + num, num)
+            currMin = min(currMin + num, num)
+            total += num 
+            globMax = max(globMax, currMax)
+            globMin = min(globMin, currMin)
+
+        return max(globMax, total - globMin) if globMax > 0 else globMax 
+```
+
+# Build a Matrix With Conditions
+
+HardTopicsCompany Tags
+
+You are given a positive integer `k`. You are also given:
+
+- a `2D` integer array `rowConditions` of size `n` where `rowConditions[i] = [above[i], below[i]]`, and
+- a `2D` integer array `colConditions` of size `m` where `colConditions[i] = [left[i], right[i]]`.
+
+The two arrays contain integers from `1` to `k`.
+
+You have to build a `k x k` matrix that contains each of the numbers from `1` to `k` **exactly once**. The remaining cells should have the value `0`.
+
+The matrix should also satisfy the following conditions:
+
+- The number `above[i]` should appear in a **row** that is strictly **above** the row at which the number `below[i]` appears for all `i` from `0` to `n - 1`.
+    
+- The number `left[i]` should appear in a **column** that is strictly **left** of the column at which the number `right[i]` appears for all `i` from `0` to `m - 1`.
+    
+
+Return **any** matrix that satisfies the conditions. If no answer exists, return an empty matrix.
+
+**Example 1:**
+
+```java
+Input: k = 3, rowConditions = [[2,1],[1,3]], colConditions = [[3,1],[2,3]]
+
+Output: [[2,0,0],[0,0,1],[0,3,0]]
+```
+
+**Example 2:**
+
+```java
+Input: k = 3, rowConditions = [[1,2],[2,3],[3,1],[2,3]], colConditions = [[2,1]]
+
+Output: []
+```
+
+**Solution**
+We need to figure out that this is a graph problem first. And then you need to figure out that this is a topological sort problem. 
+Topological sort visits, all of its previous before visiting the current node. Its basically dfs reversed. 
+```python
+class Solution:
+    def buildMatrix(self, k: int, rowConditions: List[List[int]], colConditions: List[List[int]]) -> List[List[int]]:
+        # Topological sort Graph PROBLEM! How can i come up with this, without knowing its a graph problem in 20 mins??? 
+
+        def dfs(src, adj, visited, path, order):
+            # dfs to the end and add the last element. 
+            # cycle check 
+            if src in path:
+                return False 
+            if src in visited:
+                return True 
+
+            visited.add(src)
+            path.add(src)
+
+            for nei in adj[src]:
+                if not dfs(nei, adj, visited, path, order):
+                    return False 
+
+            path.remove(src)
+
+            order.append(src)           
+
+            return True 
+
+        
+        def topoSort(edges):
+            # Build adjacency graph 
+
+            adj = defaultdict(list)
+            for src, dst in edges:
+                adj[src].append(dst)
+
+            visited = set()
+            path = set()
+            order = [] 
+            for src in range(1, k+1):
+                if src not in visited:
+                    if not dfs(src, adj, visited, path, order):
+                        return []
+            return order[::-1]
+
+        row_order = topoSort(rowConditions)
+        if not row_order: return []
+        
+        col_order = topoSort(colConditions)
+        if not col_order: return []
+
+        val_to_row = {num : i for i, num in enumerate(row_order)}
+        val_to_col = {col: i for i, col in enumerate(col_order)}
+
+        res = [[0] * k for _ in range(k)]
+
+        for num in range(1, k+1):
+            r,c = val_to_row[num], val_to_col[num] 
+            res[r][c] = num 
+        
+        return res 
+```
+
+# Last Stone Weight II
+
+MediumTopicsCompany Tags
+
+You are given an array of integers `stones` where `stones[i]` is the weight of the `ith` stone.
+
+We are playing a game with the stones. On each turn, we choose any two stones and smash them together. Suppose the stones have weights `x` and `y` with `x <= y`. The result of this smash is:
+
+- If `x == y`, both stones are destroyed, and
+- If `x != y`, the stone of weight `x` is destroyed, and the stone of weight `y` has new weight `y - x`.
+
+At the end of the game, there is **at most one** stone left.
+
+Return the **smallest** possible weight of the left stone. If there are no stones left, return `0`.
+
+**Example 1:**
+
+```java
+Input: stones = [2,4,1,5,6,3]
+
+Output: 1
+```
+
+**Solution**
+We need to identify in order to get minimum we need to make one set close to `target // 2` 
+So it becomes a bounded knapsack problem. 
+So we can do a dp, with states (i,target)
+```python
+class Solution:
+    def lastStoneWeightII(self, stones: List[int]) -> int:
+        # Didn't get this question at the start 
+        # But we would basically need to form a target 
+        # Which is just a knapsack problem. 
+        # I am going to do it with a 2 dp bottom up. 
+
+        # We can space optimise it as well. 
+        total = sum(stones)
+        target = total // 2 
+        
+        dp = [False] * (target + 1)
+        dp[0] = True 
+
+        for i in range(len(stones)):
+            new_dp = [False] * (target + 1)
+            new_dp[0] = True 
+            for y in range(1, target + 1):
+                new_dp[y] = dp[y] or dp[y - stones[i]] if stones[i] <= y else dp[y]
+            dp = new_dp
+        print(dp)
+        # Now get the max one
+        for y in range(target, -1, -1):
+            if dp[y]:
+                return abs(y - (total - y))
+
+        return 0 
+
 ```
