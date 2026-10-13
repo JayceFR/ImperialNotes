@@ -116,7 +116,7 @@ When Python creates a closure:
 - The inner function keeps a reference, not a copy, to these variables.
 
 ## Context Managers
-Context managers allow you to allocate and release resources precisely when you want to. HTe most widely used example of context managrs is the `with` statement 
+Context managers allow you to allocate and release resources precisely when you want to. The most widely used example of context managrs is the `with` statement 
 Suppose you have 2 related operations which you'd like to execute as a pair, with a block of code in between. Context managers allow you to do specifically that. 
 ```python
 with open("some_file", "w") as opened_file:
@@ -181,3 +181,11 @@ Here are the steps involved
 2. Due to the decoration, contextmanager is called with the function name (`open_file`) as its argument.
 3. The `contextmanager` decorator returns the generator wrapped by the `GeneratorContextManager` object.
 4. The `GeneratorContextManager` is assigned to the `open_file` function. Therefore, when we later call the `open_file` function, we are actually calling the `GeneratorContextManager` object.
+
+## New Features 
+Python 3.14 is the latest version. 
+- It supports free GIL build python. 
+	Gil was present in the past in order to make the underlying CPython code much more reasonable to reason about. It made reference counting simple and much more. More of a history thing. 
+- T strings, close to f strings, but called template strings. It makes serialisation to json much more efficient. 
+- Multiple interpreters 
+## Garbage collection 

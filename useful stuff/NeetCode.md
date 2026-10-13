@@ -1666,3 +1666,32 @@ class Solution:
         return 0 
 
 ```
+
+# Candy
+
+HardTopicsCompany Tags
+
+There are `n` children standing in a line. Each child is assigned a rating value given in the integer array `ratings`.
+
+You are giving candies to these children subjected to the following requirements:
+
+- Each child must have at least one candy.
+- Children with a higher rating get more candies than their neighbors.
+
+Return the **minimum** number of candies you need to have to distribute the candies to the children.
+
+**Example 1:**
+
+```java
+Input: ratings = [4,3,5]
+
+Output: 5
+```
+
+Explanation: You can allocate to the first, second and third child with 2, 1, 2 candies respectively.
+
+**Solution**
+We would need to do 2 passes, one from left to right and then one from right to left. 
+Where while doing from left to right, we look at the current element and ask if it is greater than the one to the left. If so we make sure it gets more candies than the previous one. 
+Then when doing from right to left, we look at the current elemnt and ask if it is greater than the one to the right. If so we make sure it gets more candies than the right one. 
+SMART!
