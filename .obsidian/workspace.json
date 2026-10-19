@@ -88,6 +88,20 @@
             }
           },
           {
+            "id": "27c232a7626a610d",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "year3/Maths for ML.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Maths for ML"
+            }
+          },
+          {
             "id": "d7f221fb5acd1113",
             "type": "leaf",
             "state": {
@@ -102,7 +116,7 @@
             }
           }
         ],
-        "currentTab": 5
+        "currentTab": 6
       }
     ],
     "direction": "vertical"
@@ -263,32 +277,33 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "ec8f777fb8865a13",
+  "active": "27c232a7626a610d",
   "lastOpenFiles": [
-    "imgs/Pasted image 20261016120624.png",
-    "imgs/Pasted image 20261016120612.png",
-    "imgs/Pasted image 20261016114258.png",
-    "imgs/Pasted image 20261016112509.png",
-    "imgs/Pasted image 20261016112404.png",
-    "imgs/Pasted image 20261016112240.png",
-    "imgs/Pasted image 20261016112142.png",
-    "imgs/Pasted image 20261016111814.png",
-    "imgs/Pasted image 20261016110352.png",
-    "imgs/Pasted image 20261016110107.png",
-    "imgs/Pasted image 20261016105655.png",
+    "year3/Operations Research.md",
+    "year3/Theory & Practice Of Concurrency.md",
+    "year3/Maths for ML.md",
+    "imgs/Pasted image 20261018232708.png",
+    "imgs/Pasted image 20261018220424.png",
+    "imgs/Pasted image 20261018215909.png",
+    "imgs/Pasted image 20261018215407.png",
+    "imgs/Pasted image 20261018215335.png",
+    "imgs/Pasted image 20261018215309.png",
+    "year2/Networks.md",
+    "year2/Machine Learning.md",
+    "year2/Operating Systems.md",
+    "imgs/Pasted image 20261018214546.png",
+    "imgs/Pasted image 20261018214057.png",
+    "imgs/Pasted image 20261018213906.png",
+    "imgs/Pasted image 20261018150537.png",
     "useful stuff/Algos/Algorithms.md",
     "useful stuff/Algos/NeetCode.md",
     "useful stuff/Algos",
-    "year3/Theory & Practice Of Concurrency.md",
-    "year3/Operations Research.md",
     "Computing Practical One/C++.md",
     "Computing Practical One/C.md",
     "year3",
     "Uni/📥 Inbox.md",
     "useful stuff/Python.md",
     "Uni",
-    "year2/Machine Learning.md",
-    "year2/Networks.md",
     "year2/Parsley (Parser Combinators).md",
     "GS.md",
     "Graphics.md",
@@ -298,12 +313,10 @@
     "Computing Practical One/kotlin/Important stuff to remember.md",
     "Computing Practical One/haskell/Applicatives.md",
     "year2/DRP Idea.md",
-    "year2/Operating Systems.md",
     "year2/SED.md",
     "useful stuff/Peg.md",
     "useful stuff/Arm64.md",
     "useful stuff/System Design OOFFFF.md",
-    "year2/Law.md",
     "output/attachment",
     "output/Networks.html",
     "output",

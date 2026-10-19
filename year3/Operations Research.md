@@ -146,4 +146,73 @@ Well, just multiply by `-1`
 	- So in other words, completely remove $x_1$ 
 	- ![[Pasted image 20261016114258.png]]
 
+# Fundamental Theorem of Linear Programming 
+Say we have this right 
+![[Pasted image 20261016123253.png]]
+Its fine if it is not in standard form, we can make it to standard form. 
 
+We first have some assumptions to make before we can continue. 
+*Note:* This is the first time we are making any assumptions 
+**Assumptions** 
+- Number of variables (**n**) must be  **>=** number of equations (**m**) 
+  So in a hindsight this means we must have more columns than rows. 
+- **Rows of A** are **linearly independent** (otherwise the constraints are redundant). *Note* We are **not** talking about the columns of A (thats the job of the **index se**t, to give us linearly independent columns). 
+- **rank(A) = m** 
+### Index Sets 
+Consider the system of linear equations in problem LP. 
+$$Ax=b$$
+Where $A \in R^{mn}$
+Let $A=[a_1, ..., a_n]$ where $a_i \in R^m$ is the `i th` column vector of A. 
+
+We know from the above **assumptions**
+- the m rows are linearly independent.
+- n >= m 
+- m = rank(A)
+
+![[Pasted image 20261016124613.png]]
+
+Now we are going to select **m** columns from A that are linearly independent. And from our assumptions, this is always possible. 
+
+So the size of the index set would be **m**. This index set is a subset of `{1,..,n}`
+
+The matrix B is just the collection fo those columns present in the index set. And B is a **square matrix**. It is called te **basis** corresponding to the index set I. 
+
+For example 
+![[Pasted image 20261016124921.png]]
+
+Nice 
+### Basic Solutions
+*Note* it is not Basis but it is Basic. Like Q Basic. lol
+
+**Basic Solution (BS)**: A solution x to $Ax = b$ with $x_i = 0$ for all $i \notin I$ is a basis solution to $Ax=b$ wit respect to the index set $I$
+
+**Feasible solution (FS):** A solution x satisfying both $Ax=b$ and $x>=0$ is a feasible solution 
+
+**Basic Feasible Solution (BFS)** A feasible solution which is also a basic solution is a basic feasible solution. 
+
+Basic solutions continued 
+![[Pasted image 20261016153043.png]]
+So we had a matrix A, we got and index set which here is all the numebrs from `1` to `m`. 
+And then we extract them to matrix B and we solve $Bx_B = b$ 
+And we would set the remaining aka `m .. n` as `0` in the final `x` vector. 
+Now B has some good properties which would make our lives a lot easier computing $Bx_B=b$ where we would get a **unique** solution. 
+![[Pasted image 20261016153319.png]]
+So you can see how we are constructing the final `x` which is a unique basic solution to `Ax = b` with respect to `I`. 
+
+So a quick summart before we proceed. 
+- We are in this very big high dimensional space. We have this `x` vector whic we need to figure out. And the kind of way we are going about it is by saying, okay, some parts I'm going to be exactly setting to `0`. How many, well `n - m`. Whatever is left I can solve to get a unique solution. And we get a point 
+- Do we like the point? If it is **feasible** aka from the above definition if the `x` vector we find is `>= 0` then we know its feasible for this problem here. 
+
+Lets look at a geometric intepretation 
+- For a standard form LP, BFSs correspond exactly to vertices of the feasible region. 
+- Basis solutions are just the intersection of n hyperplanes in n dimensions 
+  So in 2 dimensions, its the intersection of lines 
+  ![[Pasted image 20261016193818.png]]
+- BFSs are the ones in the feasible region 
+  ![[Pasted image 20261016193838.png]]
+
+### Fundamental Theorem of LP 
+![[Pasted image 20261016194244.png]]
+
+Just think of BFS as a vertex. It would make sense. 
+Nice!
