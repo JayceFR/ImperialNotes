@@ -398,6 +398,9 @@ Under SC we can expect
 But we would never get `0,0` 
 As it is never possible with the ordering .
 
+Sequential consistency can be used to facilitate message passing. 
+![[Pasted image 20261019154045.png]]
+
 ### Relaxed memory order 
 `std::memory_order_relaxed`
 - Its the weakest memory ordering. 
@@ -406,6 +409,323 @@ As it is never possible with the ordering .
 So this could be a possible output under relaxed memory order. Where for each location (aka x and y) we can seee they follow some valid `SC` interleaving of threads. 
 But if you look at both the outputs together, that is not even possible. 
 - Compiler has freedom to reorder relaxed (and non atomic) operations that work on different locations. 
+
+This example fails tho 
+![[Pasted image 20261019162653.png]]
+
+****
+**Relationship of behaviour of cpp program and compied program**
+Before looking at the final memory order, lets talk about behaviours of the compiled machine code and the behaviour of our `cpp` program.
+Lets say we are compiling our `Cpp` program $P$ into `ARM` $P_{arm}$ and into `x86` $P_{x86}$.
+Now we know the Behaviour of our `CPP` program $B_{P}$ can be anything if the cpp program is undefined. 
+So we have the relation 
+$$B_{P_{arm}} \subseteq B_P \\ and\\ B_{P_{x86}} \subseteq B_P $$
+The CPU in general uses a weaker memory model, than sequential and a stronger one than relaxed. 
+So if our $P$ is sequential then the compiuler would need to throw in a lot of memory barriers in order to make it work 
+****
+
+Going back to memory ordering, we can look at what pattern can help us with the above messaging pattern. 
+
+### Release Acquire Consistency 
+Quite fun
+![[Pasted image 20261019163022.png]]
+Think of **acquire** like **acaquiring** a lock and **release** releasing the lock. 
+**load acquire** and **release store**
+And whatever memory operation comes **before** release and **after** acquire will **not** be reordered. 
+So now we can do this 
+![[Pasted image 20261019171115.png]]
+
+Weird case 
+![[Pasted image 20261019171058.png]]
+This is because of the underlying implementation of the architecture. 
+Something called **Multi Copy atomicity**
+![[Pasted image 20261019171205.png]]
+
+## Data Races Re Visited 
+![[Pasted image 20261019171555.png]]
+We could even have a mixture of the synchronisation. 
+- Acquire load with a SC store 
+- SC load with a release store
+Because SC is stronger than release acquire so it would synchronise 
+
+## RMW revisted with the synchronisation 
+![[Pasted image 20261019171948.png]]
+
+# Spinlocks 
+The basic mutex which is given to us in CPP, is an example of a hybrid lock. 
+- Hybrid lock makes use of spinning and the help of the OS/ 
+
+## Motivation for spinlocks
+- Useful when lock delay is expected to be short 
+- Short critical sections 
+- Low contention 
+- Avoids making OS syscalls 
+But can have **bad** worst case behaviour (spinning)
+
+## TAS Spinlocks
+Something which we need in order to implement spin locks is called TAS which stands for **Test and Set**
+![[Pasted image 20261019172941.png]]
+`exchange` in `cpp` basically lets us atomically set any value we want to the memory location. 
+
+The way we are going to implement this using a TAS is by making use of one atomic bit. `0` is no one holds the lock, `1` someone holds the lock
+**Acquire**
+- Repeat TAS and check if the returned value is `0`. If it is we must have changed the value of the bit to `1`. So we have the lock 
+**Release**
+- `Store(0)`
+![[Pasted image 20261019173743.png]]
+Simple code snippet. 
+
+**Problem**
+![[Pasted image 20261019174330.png]]
+The TAS always writes, so it always internally doing a **store** operation, so it invalidates the caches. Causing performance bottlenecks. 
+
+**Solution**
+**Local Spinning**
+Simple fix would be to **load** and check if we are not holding the lock, if we are not hodlign the lock, then we can do this TAS/exchange operation. 
+![[Pasted image 20261019174822.png]]
+Nice! ^8dbf08
+
+**Problem**
+But there is still a problem, which can be visualised here
+![[Pasted image 20261019191817.png]]
+
+![[Pasted image 20261019191826.png]]
+
+![[Pasted image 20261019191834.png]]
+
+All the threads follow the same thing, leading to all of them again fighting for the TAS. 
+
+**Solution**
+**Active Backoff**
+Basically on each iteration we are going to do nothing for a while. 
+![[Pasted image 20261019191940.png]]
+*Note:* `volatile` is needed here to make sure the compiler doesn't optimise out the for loop. `volatile` is saying to the compiler that you would need to go and actually check this value over and over, it could have changed over time. 
+
+**Problem**
+There is one subtle problem here, we are wastefully using the energy of the CPU.
+Cooked chat. 
+
+**Solution**
+**Passive backoff**
+![[Pasted image 20261019192358.png]]
+We are going to just use the `pauise` instruction in order to work. 
+![[Pasted image 20261019192429.png]]
+*Note* We dont need the volatile anymore. 
+
+**Problem**
+Both **active** and **passive** backoff are fixed backoff 
+![[Pasted image 20261019192724.png]]
+
+**Solution**
+**Exponential backoff**
+Basically what we use in networks 
+![[Pasted image 20261019192915.png]]Relatively straight forward 
+*Note* Exponential backoff locks are not the most ideal locks, they are decent for most workloads but 
+- Threads back off when they notcie contention
+- When a thread releases the lock, there may be some delay before any thread acquires it 
+- More pronounced in higher contention
+
+## Spinlocks and fairness 
+**Negative consequences**
+- Starvation of threads
+  $T_1$ and $T_2$ could just be swapping the threads amongst them and $T_3$ would never get the lock 
+**Positive consequences**
+- Caching 
+	- Say the locks grant access to shared data structure
+	- Threads that access the data structure, that data structure would be in the cache 
+	- Threads get access gain directly as the data is in the cache 
+
+## Ticket Lock
+We can use a different type of spinlock implementation called the ticket lock. 
+![[Pasted image 20261019234040.png]]
+
+Each thread does a $fetch\_add(1)$ to the `next_ticket` in order to get a ticket 
+![[Pasted image 20261019234145.png]]
+
+![[Pasted image 20261019234159.png]]
+When a lock releases it, it is just going to update the now serving. 
+This way we have some sort of fairness mechanism going on. 
+
+Implementation in `cpp`
+![[Pasted image 20261019234236.png]]
+*Note* We are doing an `_mm_pause()` instead of doing nothing. Recall from before if we want to do nothing we need to use `volatile`
+
+## Spinlocks and Memory Ordering 
+![[Pasted image 20261020002351.png]]
+*Note:* `XCHG` just stands for `exchange`
+Lets analyse our old [[#^8dbf08 | Local Spinning SpinLocks (Click me to jump)]]
+Basically we would need to synchroinise 
+- `W(lock_bit, 0)`
+- `XCHG(lock_bit, 0, 1)` 
+We can do this simply by using the [[#Release Acquire Consistency]] 
+So in our case 
+- `W` -> `Store` so we can use the `release store`
+- `XCHG` does a store and then a load, so it accepts either passing in a `std::memory_order_release` (applies to the `store`) or `std::memory_order_acquire` (applies to the `load`). We want the later because release store and acquire load synchronise. 
+
+# Futexes and Hybrid Locks
+## SpinLocks vs Sleeping locks 
+|                              SpinLocks                              |                                Sleeping Locks                                 |
+| :-----------------------------------------------------------------: | :---------------------------------------------------------------------------: |
+|       Threads intensively check whether lock is free. (Spin)        |    Threads that dont manage to get the lock ask the OS to put it to sleep     |
+|           No SysCalls required. Done purely in user space           |         OS wakes up thread, when lock becomes free, requires syscalls         |
+| Being awake is expensive. i.e. spinning involes doing work all time |          Going to sleep is expensive because syscalls are expensive           |
+|   Greate when there is low contention or short critical sections    | Good idea to sleep if lock won't be free for a while, CPU can do other things |
+|  Prevents CPU from doing other useful work when contention is high  |              Bad idea to free if lock is just about to get free               |
+Can we get the best of both worlds? 
+- Avoid sys call if lock is available 
+- Make a sys call to put a thread to sleep in the following cases 
+	- As soon as it is determined that lock is unavailable or 
+	- After spinning unsuccessfully for a short time 
+- If possible avoid syscall while releasing the lock
+
+## Futex 
+Also known as fast userspace locking 
+*Note* The naming makes NO sense!
+![[Pasted image 20261020112148.png]]
+
+Present under the `linux/futex.h`
+
+We have two operations on Futexes 
+- `FUTEX_WAIT`
+- `FUTEX_WAKE`
+### FUTEX_WAIT
+Arguments `int *p`, `int v`
+If `*p == v`: sleeps the thread 
+![[Pasted image 20261020112559.png]]
+*Important* The above operations are atomic
+
+### FUTEX_WAKE
+Arguments `int *p`, `int wake_count`
+- Wakes up `wake_count` threads that are on the wait queue for `p`
+- `1` and `INT_MAX` are the only sensible values for `wake_count`
+There is *No* guarantee about which thread would be woken up
+The above operations are **atomic** as well
+
+![[Pasted image 20261020113007.png]]
+We'll come back to this after the example 
+
+### Simple implementation 
+Code 
+```cpp
+#include <atomic>
+#include <linux/futex.h>
+#include <sys/syscall.h>
+#include <unistd.h>
+
+class MutexSimple{
+public:
+    MutexSimple(): mutex_(kFree_) {}
+
+    void Lock(){
+        while (mutex_.exchange(kLocked_) == kLocked_){
+            // We done have it yet 
+            syscall(SYS_futex, reinterpret_cast<int*>(&mutex_), FUTEX_WAIT, kLocked_, nullptr, nullptr, 0);
+        }
+    }
+
+    void UnLock(){
+        mutex_.store(kFree_);
+        syscall(SYS_futex, reinterpret_cast<int*>(&mutex_), FUTEX_WAKE, 1, nullptr, nullptr, 0);
+    }
+
+private:
+    const int kFree_ = 0;
+    const int kLocked_ = 1; 
+    std::atomic<int> mutex_; 
+};
+```
+The syscall function comes from the `unistd.h` c header file. 
+*Note* we require the `reinterpret_cast` as the futex sys call only accepts `int*` but we have an `atomic int*` so we would need to cast it. 
+But in an exam we can just write the below. 
+![[Pasted image 20261020115107.png]]
+
+### Cleverness of CPP revisited 
+Just looking at how the kernel space and user space is treated. 
+`1st case` $T_1$ locks and then $T_1$ unlocks 
+- The lock wouldn't do any sys calls, while the unlock unconditonally does one 
+  ![[Pasted image 20261020125322.png]]
+  As you can see because there is nothing associated with the address, no wakeups are required
+![[Pasted image 20261020125356.png]]
+
+`2nd case` There could be another thread $T_2$ which can come along and try to acquire the lock. 
+![[Pasted image 20261020125142.png]]
+So over here in kernel space we create a queue `keyed` by the address we pass to the syscall.
+![[Pasted image 20261020125613.png]]
+We put $T_2$ to sleep 
+Lets say at this time $T_4$ comes in as well wanting to acquire the lock
+![[Pasted image 20261020125702.png]]
+Its just added to the queue 
+Now lets say $T_1$ is done with its job and releases the lock 
+![[Pasted image 20261020125737.png]]
+Something comes out of the queue, remember we cant assume any order
+![[Pasted image 20261020125801.png]]
+Here $T_2$ is selected and is unlocked. 
+*Note* Now no one holds the lock. Which might be a bit **dangerous** but thats fine because of our while loop, where they would do the TAS operation immediately. 
+
+*Important* Note the fact that the **kernel memory** is **bounded** by the **number of threads** we have
+
+
+**Problem with the simple mutex design**
+`FUTEX_WAIT` is called on every unlock. Wasteful to call `FUTEX_WAIT` when there are no waiters. 
+
+**Solution**
+Its quite confusing use of futex, but it works.
+Instead of `2`  states we are going to have `3`
+![[Pasted image 20261020155623.png]]
+
+```cpp
+#include <atomic>
+#include <linux/futex.h>
+#include <sys/syscall.h>
+#include <unistd.h>
+
+class MutexConfusing{
+public:
+    MutexConfusing(): mutex_(kFree_) {}
+
+    void Lock(){
+        int oldvalue = cmpxchg(kFree_, kLockedNoWaiter_);
+        if (oldvalue == kFree_){
+            return; 
+        }
+        do{
+            cmpxchg(kLockedWaiters_, kLockedNoWaiter_);
+            syscall(SYS_futex, reinterpret_cast<int*>(&mutex_), FUTEX_WAIT, kLockedWaiters_, nullptr, nullptr, 0);
+            oldvalue = cmpxchg(kFree_, kLockedWaiters_);
+        } while(oldvalue != kFree_);
+    }
+
+    void UnLock(){
+        if (mutex_.exchange(kFree_) == kLockedWaiters_){
+            // Wake up someone 
+            syscall(SYS_futex, reinterpret_cast<int*>(&mutex_), FUTEX_WAKE, 1, nullptr, nullptr, 0);
+        }
+    }
+
+private:
+    const int kFree_ = 0;
+    const int kLockedNoWaiter_ = 1; 
+    const int kLockedWaiters_ = 2; 
+    std::atomic<int> mutex_; 
+
+    int cmpxchg(int expected, int desired){
+        mutex_.compare_exchange_strong(expected, desired);
+        return expected;
+    }
+};
+```
+
+It can feel a bit concerning of whether some thread which is sleeping might never be woken up if some other thread barges in. 
+But its completely fine mainly because of 
+- The line `oldvalue = cmpxchg(kFree_, kLockedWaiters_);`
+- Sleeping only happens atomically if the value of the `mutex_` variable is set to `2`
+- And at least one is  woken up if its set to `2` in unlock
+SO SMART!
+
+We can do a small optimisation here as well 
+![[Pasted image 20261020161153.png]]
+With that we are done with Cpp concurrency lol. 
+****
 
 # Random Useful Cpp stuff for this course 
 - `std::numeric_limit`
@@ -421,4 +741,5 @@ But if you look at both the outputs together, that is not even possible.
 		std::chrono::milliseconds(1)
 	);
 	```
-	
+- To measure energy ![[Pasted image 20261019192541.png]]
+- 

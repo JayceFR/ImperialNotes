@@ -91,14 +91,10 @@
             "id": "27c232a7626a610d",
             "type": "leaf",
             "state": {
-              "type": "markdown",
-              "state": {
-                "file": "year3/Maths for ML.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "Maths for ML"
+              "type": "graph",
+              "state": {},
+              "icon": "lucide-git-fork",
+              "title": "Graph view"
             }
           },
           {
@@ -279,22 +275,22 @@
   },
   "active": "27c232a7626a610d",
   "lastOpenFiles": [
-    "year3/Operations Research.md",
     "year3/Theory & Practice Of Concurrency.md",
+    "imgs/Pasted image 20261020161153.png",
+    "imgs/Pasted image 20261020155623.png",
+    "imgs/Pasted image 20261020125801.png",
+    "imgs/Pasted image 20261020125737.png",
+    "imgs/Pasted image 20261020125702.png",
+    "imgs/Pasted image 20261020125613.png",
+    "imgs/Pasted image 20261020125356.png",
+    "imgs/Pasted image 20261020125322.png",
+    "imgs/Pasted image 20261020125142.png",
+    "imgs/Pasted image 20261020115107.png",
     "year3/Maths for ML.md",
-    "imgs/Pasted image 20261018232708.png",
-    "imgs/Pasted image 20261018220424.png",
-    "imgs/Pasted image 20261018215909.png",
-    "imgs/Pasted image 20261018215407.png",
-    "imgs/Pasted image 20261018215335.png",
-    "imgs/Pasted image 20261018215309.png",
+    "year3/Operations Research.md",
     "year2/Networks.md",
     "year2/Machine Learning.md",
     "year2/Operating Systems.md",
-    "imgs/Pasted image 20261018214546.png",
-    "imgs/Pasted image 20261018214057.png",
-    "imgs/Pasted image 20261018213906.png",
-    "imgs/Pasted image 20261018150537.png",
     "useful stuff/Algos/Algorithms.md",
     "useful stuff/Algos/NeetCode.md",
     "useful stuff/Algos",
