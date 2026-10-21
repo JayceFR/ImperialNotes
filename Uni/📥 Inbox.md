@@ -2,10 +2,13 @@
 ```
 syntax to create the checkbox is - [ ]
 ```
-## New
-- [ ] Maths for ML - Problems_`00`.pdf
-- [ ] Maths for ML - Problems_`01`.pdf
-- [ ] Operations Research - There is a schedule, no tutorials for this week 
-- [ ] Concurrency - Cpp crash course 
-- [ ] Concurrency - Tutorial `1`
+## TODOS
+- [ ] Read this [Locking in WebKit | WebKit](https://webkit.org/blog/6161/locking-in-webkit/) before Concurrecny CW
+- [ ] Concurrency CW
+- [ ] OR CW
+- [ ] Lecture debt upto 21/10
+	- [ ] OR -> 3
+	- [ ] Concurrency -> 2 
+	- [ ] Maths For ML -> 6
+	- [ ] Gen AI -> 6 
 

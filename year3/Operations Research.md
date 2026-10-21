@@ -185,10 +185,13 @@ Nice
 *Note* it is not Basis but it is Basic. Like Q Basic. lol
 
 **Basic Solution (BS)**: A solution x to $Ax = b$ with $x_i = 0$ for all $i \notin I$ is a basis solution to $Ax=b$ wit respect to the index set $I$
+Try to expand an example to see how it works. 
+But effectively it is $B(I)\hat{x}$. Where the $\hat x$ needs to only contain $x_j$  where  $j \in I$. Cool
 
 **Feasible solution (FS):** A solution x satisfying both $Ax=b$ and $x>=0$ is a feasible solution 
 
 **Basic Feasible Solution (BFS)** A feasible solution which is also a basic solution is a basic feasible solution. 
+If you look down, you would see effectively `BFS` is a vertex 
 
 Basic solutions continued 
 ![[Pasted image 20261016153043.png]]
@@ -216,3 +219,144 @@ Lets look at a geometric intepretation
 
 Just think of BFS as a vertex. It would make sense. 
 Nice!
+
+### Basic Variables 
+Say, we have an index set `I` of size `m` and `B(I)` which is invertible. 
+Now we would obviously split the `x` into `2` components
+**Basic Variables (BV)**: The varaibles $\{ x_i \}_{i \in I}$ are called basic variables 
+**Non Basic Variables (NBV)**: $\{ x_i \}_{i \notin I}$ are called non basic variables. 
+*Note* by construction, NBVs are always `0`. The BVs can be zero or non zero 
+And now we say 
+$$x_{B} = [x_i | i \in I]\\
+and \\
+x_{NB} = [x_i | i \notin I]$$
+*Note* both $x_B$ and $x_{NB}$ are column vectors 
+
+You might be good to question here wouldn't the $x_{NB}$ just be a `0` vector, you are right, the professor pleads to trust the process. 
+
+### Basic representation 
+*Definition* The basic representation corresponding to I is the reformulation of the system $z=c^Tx, Ax=b$ which **expresses the objective function value`z` and each BV as a linear function of the NBV's .** 
+![[Pasted image 20261020175528.png]]
+Quite confusing, but we want to effectively be able to represent `z` and `BV` as a function of `NBVs`
+
+We can start off by splitting the $Ax=b$ 
+**Intuition**
+Try expanding in paper a `3x4` `A` matrix wth `x` and using the index set = {1,2,3} so setting $x_4$ to `0`. You would see it is basically three rows of some combination of  $x_1 + x_2 + x_3$ . And the final row element being `0`
+Which is effectively just $Bx_B$ simple. 
+So now with that intution we can split up $Ax=b$ to 
+![[Pasted image 20261020180525.png]]
+to $$Bx_B + Nx_N = b$$
+You might have the same question again that wouldn't the $x_N$ just be  `0`, you are right we would set them to `0` later but we would need it in this form because these **varaibles are precisely those which we would want to turn on, before moving from one vertex to another.**
+
+And we can even decompose our cost function
+$$z=c^Tx \\ z={c_B}^Tx_B + {c_N}^Tx_N$$
+
+And then using them and doing some fancy rearranging we get 
+![[Pasted image 20261020181753.png]]
+So now we have `z` in form of NBVs only. 
+
+![[Pasted image 20261020192828.png]]
+So we have these `2` equations and *Note* how we can get the basis solution, we can just get it by setting $x_N$ to `0` 
+And we have another important quantity 
+**reduced cost vector** The vector characterises the sensitivity of the objective funciton value `z` with respect ot the non basis variables $x_N$
+
+**Simple example** 
+![[Pasted image 20261020200414.png]]
+![[Pasted image 20261020200421.png]]
+![[Pasted image 20261020200427.png]]
+![[Pasted image 20261020200435.png]]
+*Note* The $*$ in the above represents this equation here 
+![[Pasted image 20261021115458.png]]
+Which is present in the above slides screenshot. 
+
+Quick **summary**
+![[Pasted image 20261020200919.png]]
+
+*Important*
+![[Pasted image 20261020200941.png]]
+So if `r >= 0` then no other feasible solution can have a lower objective value than the current BFS.  Because recall in the formula we are adding $r^T x_N$ so if `r >= 0` then we would only make the cost bigger. While we are trying to minimise the cost 
+
+# Simplex
+Now we are going to use the above facts in order to set up simplex 
+We had this formula for **basic representation** before
+![[Pasted image 20261021115524.png]]
+## Simplex Tableau 
+
+*Note* We would need to **start** from **basic representation**. If the current $LP$ is not in basic representation, i.e the $z$ and $x_B$ are not written in terms of $x_N$, then we would need to follow the above formula to first make it into a basic representation. 
+
+Now we have a basic representation
+We are going to rearrange the above **basic representation** to this form 
+![[Pasted image 20261021115817.png]]
+
+For example 
+Consider this $LP$ 
+![[Pasted image 20261021115844.png]]
+This system of $LP$ is in **basic representation**, as it follows the above definition. And is written in the tableau format. More concretely it would look like this 
+![[Pasted image 20261021120104.png]]
+I would recommend to keep the **BV** column in the left.
+So we would have something like this 
+![[Pasted image 20261021120146.png]]
+
+*Important* Super important to note that the columns of the basic variables and `z` (Note, column and not row) would have `1` only in the column that associates with it. For example $T_{x_1, x_1} = 1$. And the remaining values in the column are `0`.  ^01d56c
+### Properties of Simplex Tableau 
+These are very important, make sure you are 1000% thorough with these points 
+![[Pasted image 20261021120717.png]]
+Description for them 
+- This is true, because in order to find the objective value of the current BS we would basically turn of all the NBVs. Which would get us the value `8` in the above example 
+- Follows from the above point, we would get the values by settign the values of the NBVs to `0` and because of this fact [[#^01d56c]]  ^d50624
+- This is due to 
+  Rearranging this eq
+  ![[Pasted image 20261021121312.png]]
+  to 
+  ![[Pasted image 20261021121325.png]]
+  And *important* Note from above when we were talking about **reduced cost vector** which is basically how much of each $x_N$ can i turn on, we had this property written, 
+  ![[Pasted image 20261021121546.png]]
+  Now we have the **negative** of that, becuase of our **rearranging**. 
+  So take this representation 
+  ![[Pasted image 20261021121716.png]]
+  We have reached our local optimum iff all the $\beta_i \leq 0$   because if we rearrange back to $z = ...+r^Tx_N$ then turning anything on would only increase our cost function. 
+- This follows from the definition of the **FS** and from point 2 [[#^d50624]]
+## Pivoting
+So now we have our simplex tableau set up. 
+![[Pasted image 20261021122328.png]]
+*Note* Leaving the basis, is basically the BV in the BV column going out. and the entering the basis is the one in the row coming in. 
+**For example** 
+Take this tableau
+![[Pasted image 20261021122810.png]]
+Say we are going $x_4$ is entering the basis and $x_1$ is going to leave the basis. 
+We would essentially need to make the $x_4$ column all `0`s but keep `1` int the row of $x_4$ which would be the $x_1$ now as that is leaving 
+![[Pasted image 20261021123150.png]]
+We dont need to do anything for this row, as there is already a `1` in $T_{x_4 x_4}$ 
+Now we just need to take some linear combination of this row and subtract from the other rows 
+![[Pasted image 20261021123305.png]]
+In order to get this. Baby maths 
+Now $x_4$ is a basis 
+### Pivot selection
+The real rule is how are we goign to select the pivots. 
+There are 2 things to look at, the one entering the basis and the one leaving the basis 
+**Variable entering the basis**
+We look at the objective row, and choose the one that is positive, because we can technically move one unit in that direction to reduce the cost. 
+![[Pasted image 20261021123854.png]]
+
+**Variables leaving the basis**
+Consider this Tableau notation again 
+![[Pasted image 20261021161308.png]]
+Now we are going to set $\bar{x}_{iq}$
+![[Pasted image 20261021163318.png]]
+*Note* We are guaranteed that $y_{i0} \geq 0$ as its a value of the feasible region and we know by definition, for a feasible point the $y_{i0} \geq 0$
+![[Pasted image 20261021163528.png]]
+*Note* If the denominator is negative, we are just going to say $\infty$ 
+Now we have two cases if the $min \bar x_{iq}$ is either $\infty$ or some value less than infinity. 
+![[Pasted image 20261021163717.png]]
+So if all the ratio test values  are infintiy then the problem is unbounded 
+
+Otherwise 
+![[Pasted image 20261021163801.png]]
+*Note* The fact that if there are several same value indexes, then we should choose the one with the smallest index. 
+Easy. 
+
+Full steps of Simplex
+![[Pasted image 20261021163934.png]]
+
+
+
